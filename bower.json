@@ -4,15 +4,12 @@
   "version": "1.0.0",
   "homepage": "https://github.com/lucasvieirasilva/angular-grid-control",
   "dependencies": {
-    "angular": "~1.4.5",
-    "angular-translate": "~2.9.0",
-    "angular-animate": "~1.4.5",
-    "angular-bootstrap": "~1.3.3",
-    "bootstrap": "~3.3.5",
-    "jquery": "~3.1.1"
-  },
-  "resolutions": {
-    "angular": "~1.4.x"
+    "angular": ">=1.4.5",
+    "angular-translate": ">=2.9.0",
+    "angular-animate": ">=1.4.5",
+    "angular-bootstrap": ">=1.3.3",
+    "bootstrap": ">=3.3.5",
+    "jquery": ">=3.1.1"
   },
   "main": [
     "src/angular-grid-control.js",
