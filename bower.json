@@ -28,10 +28,8 @@
     "node_modules",
     "bower_components",
     "sample",
-    "src",
     "/*",
-    "!dist",
-    "!bower.json"
+    "!dist"
   ],
   "repository": {
     "type": "git",
