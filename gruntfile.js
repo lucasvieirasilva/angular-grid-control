@@ -56,6 +56,5 @@ module.exports = function (grunt) {
 
     grunt.registerTask('installBower', ["bower:install"]);
     grunt.registerTask('default', ["clean:dist", "bower:install", "cssmin:dist", "uglify:dist", "watch"]);
-
     grunt.registerTask('release', ["clean:dist", "cssmin:dist", "uglify:dist"]);
 };
