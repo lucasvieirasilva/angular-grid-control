@@ -1,0 +1,160 @@
+var app = angular.module('app', [
+    'ngAnimate',
+    'ui.bootstrap',
+    'pascalprecht.translate',
+    'angular-grid-control'
+]);
+
+app.config(["$translateProvider", function ($translateProvider) {
+    $translateProvider.translations('pt-BR', {
+        NameLabel: "Nome",
+        DateTimeLabel: "Data de atualização",
+        ItensPerPageLabel: "Items por pagina",
+        FirstLabel: "Primeira",
+        LastLabel: "Ultima",
+        PreviousLabel: "Anterior",
+        NextLabel: "Proxima"
+    });
+
+    $translateProvider.preferredLanguage('pt-BR');
+}]);
+
+app.controller('sampleSimpleGridCtrl', ["$scope", function ($scope) {
+    var main = this;
+
+    var data = [{
+        "name": "Joe",
+        "updateDate": new Date()
+    }, {
+        "name": "Marry",
+        "updateDate": new Date()
+    }, {
+        "name": "Doe",
+        "updateDate": new Date()
+    }];
+
+    main.gridParams = {
+        data: data,
+        options: {
+            type: "simple", // OR UNDEFINED
+            checkbox: true,
+            async: false
+        },
+        columns: [{
+            field: "name",
+            displayName: "NameLabel",
+            filter: true,
+            filterType: "text"
+        }, {
+            field: "updateDate",
+            displayName: "DateTimeLabel",
+            filter: true,
+            cellTemplate: "<span>{{ row[col.field] | date: 'dd/MM/yyyy HH:mm:ss' }}</span>",
+            filterType: "date"
+        }],
+    };
+}]);
+
+app.controller('samplePaginationGridCtrl', ["$scope", "$q", "$timeout", function ($scope, $q, $timeout) {
+    var main = this;
+
+    var dataRequest = function (request) {
+        var defer = $q.defer();
+
+        var data = {
+            items: [],
+            pagingInfo: {
+                pageSize: request.pagingInfo.pageSize,
+                pageIndex: request.pagingInfo.pageIndex,
+                totalCount: 1000,
+                hasNextPage: true,
+                hasPreviousPage: false
+            },
+        };
+
+        for (var i = 0; i < request.pagingInfo.pageSize; i++) {
+            var item = {};
+
+            item.name = "Joe " + request.pagingInfo.pageIndex + "." + i;
+            item.updateDate = new Date();
+
+            data.items.push(item);
+        }
+
+        $timeout(function () {
+            defer.resolve(data);
+        }, 500);
+
+        return defer.promise;
+    };
+
+    main.gridParams = {
+        data: dataRequest,
+        options: {
+            type: "pagination",
+            checkbox: true,
+            async: true
+        },
+        columns: [{
+            field: "name",
+            displayName: "NameLabel",
+            filter: true,
+            filterType: "text"
+        }, {
+            field: "updateDate",
+            displayName: "DateTimeLabel",
+            filter: true,
+            cellTemplate: "<span>{{ row[col.field] | date: 'dd/MM/yyyy HH:mm:ss' }}</span>",
+            filterType: "date"
+        }],
+    };
+}]);
+
+app.controller('sampleScrollGridCtrl', ["$scope", "$q", "$timeout", function ($scope, $q, $timeout) {
+    var main = this;
+
+    var data = [];
+
+    var getData = function () {
+        var defer = $q.defer();
+
+        var newData = [];
+
+        for (var i = 0; i < 30; i++) {
+            var item = {};
+
+            item.name = "Joe " + data.length + 1;
+            item.updateDate = new Date();
+
+            newData.push(item);
+        }
+
+        $timeout(function (){
+            defer.resolve(newData);
+        }, 500);
+
+        return defer.promise;
+    };
+
+    main.gridParams = {
+        data: getData,
+        options: {
+            type: "scroll",
+            height: "350px",
+            checkbox: true,
+            async: true
+        },
+        columns: [{
+            field: "name",
+            displayName: "NameLabel",
+            filter: true,
+            filterType: "text"
+        }, {
+            field: "updateDate",
+            displayName: "DateTimeLabel",
+            filter: true,
+            cellTemplate: "<span>{{ row[col.field] | date: 'dd/MM/yyyy HH:mm:ss' }}</span>",
+            filterType: "date"
+        }],
+    };
+}]);
