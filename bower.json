@@ -33,6 +33,10 @@
     "!dist",
     "!bower.json"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/lucasvieirasilva/angular-grid-control.git"
+  },
   "resolutions": {
     "angular": "~1.4.x"
   },
