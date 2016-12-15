@@ -1,17 +1,21 @@
 {
   "name": "angular-grid-control",
+  "private": true,
+  "version": "1.0.0",
+  "homepage": "https://github.com/lucasvieirasilva/angular-grid-control",
   "dependencies": {
-    "angular": "1.4.x",
-    "angular-translate": "^2.9.0",
-    "angular-animate": "1.4.x",
-    "angular-bootstrap": "1.3.3",
-    "bootstrap": "3.3.5",
-    "jquery": "3.1.1"
+    "angular": "~1.4.5",
+    "angular-translate": "~2.9.0",
+    "angular-animate": "~1.4.5",
+    "angular-bootstrap": "~1.3.3",
+    "bootstrap": "~3.3.5",
+    "jquery": "~3.1.1"
+  },
+  "resolutions": {
+    "angular": "~1.4.x"
   },
   "main": [
-    "dist/angular-grid-control.min.js",
     "src/angular-grid-control.js",
-    "dist/css/angular-grid-control.min.css",
     "src/css/angular-grid-control.css"
   ],
   "authors": [{
@@ -23,20 +27,16 @@
     "email": "a.saraiva90@gmail.com",
     "homepage": "https://andersonsaraiva.github.io"
   }],
+  "license": "MIT",
   "ignore": [
     "**/.*",
     "node_modules",
     "bower_components",
-    "sample",
-    "/*",
-    "!dist"
+    "sample"
   ],
   "repository": {
     "type": "git",
     "url": "git://github.com/lucasvieirasilva/angular-grid-control.git"
-  },
-  "resolutions": {
-    "angular": "~1.4.x"
   },
   "exportsOverride": {
     "bootstrap": {
