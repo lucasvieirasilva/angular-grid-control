@@ -1,2 +1,4 @@
-!/node_modules
-!/bower_components
+$ cat .gitignore
+# exclude everything except directory foo/bar
+/node_modules
+/bower_components
