@@ -61,7 +61,7 @@ angular.module('template/grid', []).run(["$templateCache", function ($templateCa
         "\r                <th ng-if=\"ctrl.checkbox\" class=\"col-lg-5 vertical-align-top grid-control-column-check-box \">\n" +
         "\r						<div class=\"checkbox grid-control-no-margin\">\n" +
         "\r						    <label>\n" +
-        "\r						        <input type=\"checkbox\" ng-model=\"ctrl.checkBoxAllModel\" ng-change=\"ctrl.checkBoxSelectAll()\">\n" +
+        "\r						        <input type=\"checkbox\" class=\"colored-blue\" ng-model=\"ctrl.checkBoxAllModel\" ng-change=\"ctrl.checkBoxSelectAll()\">\n" +
         "\r						        <span class=\"text\"></span>\n" +
         "\r						    </label>\n" +
         "\r						</div>\n" +
