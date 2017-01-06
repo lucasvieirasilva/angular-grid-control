@@ -55,7 +55,6 @@ angular.module('template/grid', []).run(["$templateCache", function ($templateCa
         "</div>");
 
     $templateCache.put("template/grid/simple-grid.html", "<div>\n" +
-        "\r <div>\n" +
         "\r   <table class=\"table table-striped table-bordered table-hover\">\n" +
         "\r       <thead class=\"grid-control-bg-table\">\n" +
         "\r           <tr>\n" +
@@ -89,7 +88,6 @@ angular.module('template/grid', []).run(["$templateCache", function ($templateCa
         "\r           </tr>\n" +
         "\r       </tbody>\n" +
         "\r   </table>\n" +
-        "\r   </div>\n" +
         "</div>");
 
     $templateCache.put("template/grid/scroll-grid.html", "<div class=\"table-scrollable\" ng-style=\"{ height: ctrl.height ? ctrl.height : 'auto' }\">\n" +
