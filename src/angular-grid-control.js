@@ -68,6 +68,7 @@ angular.module('template/grid', []).run(["$templateCache", function ($templateCa
         "\r						</div>\n" +
         "\r                </th>\n" +
         "\r                <th ng-style=\"{'width' : col.width ? col.width : 'auto'}\" class=\"col-lg-5 vertical-align-top\" ng-repeat=\"col in ctrl.columns\">\n" +
+        "\r                   <span><i ng-if=\"col.icon\" ng-class=\"col.icon\"></i> {{ col.displayName | translate }}</span>\n" +
         "\r                </th>\n" +
         "\r           </tr>\n" +
         "\r       </thead>\n" +
