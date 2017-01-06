@@ -4,15 +4,15 @@ angular.module('template/grid', []).run(["$templateCache", function ($templateCa
     $templateCache.put("template/grid/pagination-grid.html", "<div>\n" +
         "\r <div>\n" +
         "\r   <table class=\"table table-striped table-bordered table-hover\">\n" +
-        "\r       <thead>\n" +
+        "\r       <thead class=\"grid-control-bg-table\">\n" +
         "\r           <tr>\n" +
         "\r                <th ng-if=\"ctrl.checkbox\" class=\"col-lg-5 vertical-align-top grid-control-column-check-box \">\n" +
-        "\r						<div class=\"checkbox grid-control-no-margin\">              \n" +
-        "\r						    <label>                           \n" +
-        "\r						        <input type=\"checkbox\" ng-model=\"ctrl.checkBoxAllModel\" ng-change=\"ctrl.checkBoxSelectAll()\">     \n" +
-        "\r						        <span class=\"text\"></span>  \n" +
-        "\r						    </label>                          \n" +
-        "\r						</div>                                \n" +
+        "\r						<div class=\"checkbox grid-control-no-margin\">\n" +
+        "\r						    <label>\n" +
+        "\r						        <input type=\"checkbox\" ng-model=\"ctrl.checkBoxAllModel\" ng-change=\"ctrl.checkBoxSelectAll()\">\n" +
+        "\r						        <span class=\"text\"></span>\n" +
+        "\r						    </label>\n" +
+        "\r						</div>\n" +
         "\r                </th>\n" +
         "\r                <th ng-style=\"{'width' : col.width ? col.width : 'auto'}\" class=\"col-lg-5 vertical-align-top\" ng-repeat=\"col in ctrl.columns\">\n" +
         "\r                   <span class=\"margin-bottom-10 col-xs-12 no-padding \"><i ng-if=\"col.icon\" ng-class=\"col.icon\"></i> {{ col.displayName | translate }}</span> \n" +
@@ -29,12 +29,12 @@ angular.module('template/grid', []).run(["$templateCache", function ($templateCa
         "\r       <tbody>\n" +
         "\r           <tr ng-repeat=\"row in ctrl.data\" ng-class=\"ctrl.rowCssClass(row)\">\n" +
         "\r                <td ng-if=\"ctrl.checkbox\" class=\"col-lg-5 vertical-align-top  grid-control-column-check-box\">\n" +
-        "\r						<div class=\"checkbox grid-control-no-margin\">              \n" +
-        "\r						    <label>                           \n" +
-        "\r						        <input type=\"checkbox\" ng-model=\"row.selected\" ng-change=\"ctrl.checkBoxSelection(row)\">     \n" +
-        "\r						        <span class=\"text\"></span>  \n" +
-        "\r						    </label>                          \n" +
-        "\r						</div>                                \n" +
+        "\r						<div class=\"checkbox grid-control-no-margin\">\n" +
+        "\r						    <label>\n" +
+        "\r						        <input type=\"checkbox\" ng-model=\"row.selected\" ng-change=\"ctrl.checkBoxSelection(row)\">\n" +
+        "\r						        <span class=\"text\"></span>\n" +
+        "\r						    </label>\n" +
+        "\r						</div>\n" +
         "\r                </td>\n" +
         "\r               <td ng-repeat=\"col in ctrl.columns\">\n" +
         "\r                   <span ng-if=\"col.cellTemplate\" gc-compile=\"col.cellTemplate\" cell-template-scope=\"col.cellTemplateScope\"></span>\n" +
@@ -46,7 +46,7 @@ angular.module('template/grid', []).run(["$templateCache", function ($templateCa
         "\r   </div>\n" +
         "\r   <div ng-show=\"ctrl.showPagination\" class=\"text-align-center margin-top-20 pagination-greed\" >\n" +
         "\r         <div class=\"floatLeft number-pagination\">\n" +
-        "\r             <span>{{ 'ItensPerPageLabel' | translate }}: </span> \n" +
+        "\r             <span>{{ 'ItensPerPageLabel' | translate }}: </span>\n" +
         "\r             <select name=\"pageSize\" id=\"pageSize\" ng-options=\"option as option for option in ctrl.pageSizes\" ng-model=\"ctrl.pagingInfo.pageSize\"></select>\n" +
         "\r         </div>\n" +
         "\r         <uib-pagination ng-model=\"ctrl.pagingInfo.pageIndex\" total-items=\"ctrl.pagingInfo.totalCount\" items-per-page=\"ctrl.pagingInfo.pageSize\" max-size=\"5\" boundary-links=\"true\" previous-text=\"{{ 'PreviousLabel' | translate }}\" next-text=\"{{ 'NextLabel' | translate }}\" first-text=\"{{ 'FirstLabel' | translate }}\" last-text=\"{{ 'LastLabel' | translate }}\">\n" +
@@ -56,31 +56,30 @@ angular.module('template/grid', []).run(["$templateCache", function ($templateCa
 
     $templateCache.put("template/grid/simple-grid.html", "<div>\n" +
         "\r <div>\n" +
-        "\r   <table class=\"table table-striped table-bordered table-hover \">\n" +
-        "\r       <thead>\n" +
+        "\r   <table class=\"table table-striped table-bordered table-hover\">\n" +
+        "\r       <thead class=\"grid-control-bg-table\">\n" +
         "\r           <tr>\n" +
         "\r                <th ng-if=\"ctrl.checkbox\" class=\"col-lg-5 vertical-align-top grid-control-column-check-box \">\n" +
-        "\r						<div class=\"checkbox grid-control-no-margin\">              \n" +
-        "\r						    <label>                           \n" +
-        "\r						        <input type=\"checkbox\" ng-model=\"ctrl.checkBoxAllModel\" ng-change=\"ctrl.checkBoxSelectAll()\">     \n" +
-        "\r						        <span class=\"text\"></span>  \n" +
-        "\r						    </label>                          \n" +
-        "\r						</div>                                \n" +
+        "\r						<div class=\"checkbox grid-control-no-margin\">\n" +
+        "\r						    <label>\n" +
+        "\r						        <input type=\"checkbox\" ng-model=\"ctrl.checkBoxAllModel\" ng-change=\"ctrl.checkBoxSelectAll()\">\n" +
+        "\r						        <span class=\"text\"></span>\n" +
+        "\r						    </label>\n" +
+        "\r						</div>\n" +
         "\r                </th>\n" +
         "\r                <th ng-style=\"{'width' : col.width ? col.width : 'auto'}\" class=\"col-lg-5 vertical-align-top\" ng-repeat=\"col in ctrl.columns\">\n" +
-        "\r                   <span class=\"margin-bottom-10 col-xs-12 no-padding \"><i ng-if=\"col.icon\" ng-class=\"col.icon\"></i> {{ col.displayName | translate }}</span> \n" +
         "\r                </th>\n" +
         "\r           </tr>\n" +
         "\r       </thead>\n" +
         "\r       <tbody>\n" +
         "\r           <tr ng-repeat=\"row in ctrl.data\" ng-click=\"ctrl.select(row)\" ng-class=\"ctrl.rowCssClass(row)\">\n" +
         "\r                <td ng-if=\"ctrl.checkbox\" class=\"col-lg-5 vertical-align-top  grid-control-column-check-box\">\n" +
-        "\r						<div class=\"checkbox grid-control-no-margin\">              \n" +
-        "\r						    <label>                           \n" +
-        "\r						        <input type=\"checkbox\" ng-model=\"row.selected\" ng-change=\"ctrl.checkBoxSelection(row)\">     \n" +
-        "\r						        <span class=\"text\"></span>  \n" +
-        "\r						    </label>                          \n" +
-        "\r						</div>                                \n" +
+        "\r						<div class=\"checkbox grid-control-no-margin\">\n" +
+        "\r						    <label>\n" +
+        "\r						        <input type=\"checkbox\" ng-model=\"row.selected\" ng-change=\"ctrl.checkBoxSelection(row)\">\n" +
+        "\r						        <span class=\"text\"></span>\n" +
+        "\r						    </label>\n" +
+        "\r						</div>\n" +
         "\r                </td>\n" +
         "\r               <td ng-repeat=\"col in ctrl.columns\">\n" +
         "\r                   <span ng-if=\"col.cellTemplate\" gc-compile=\"col.cellTemplate\" cell-template-scope=\"col.cellTemplateScope\"></span>\n" +
@@ -95,15 +94,15 @@ angular.module('template/grid', []).run(["$templateCache", function ($templateCa
     $templateCache.put("template/grid/scroll-grid.html", "<div class=\"table-scrollable\" ng-style=\"{ height: ctrl.height ? ctrl.height : 'auto' }\">\n" +
         "\r <div>\n" +
         "\r   <table class=\"table table-striped table-bordered table-hover\">\n" +
-        "\r       <thead>\n" +
+        "\r       <thead class=\"grid-control-bg-table\">\n" +
         "\r           <tr>\n" +
         "\r                <th ng-if=\"ctrl.checkbox\" class=\"col-lg-5 vertical-align-top grid-control-column-check-box \">\n" +
-        "\r						<div class=\"checkbox grid-control-no-margin\">              \n" +
+        "\r						<div class=\"checkbox grid-control-no-margin\">\n" +
         "\r						    <label>                           \n" +
-        "\r						        <input type=\"checkbox\" ng-model=\"ctrl.checkBoxAllModel\" ng-change=\"ctrl.checkBoxSelectAll()\">     \n" +
-        "\r						        <span class=\"text\"></span>  \n" +
-        "\r						    </label>                          \n" +
-        "\r						</div>                                \n" +
+        "\r						        <input type=\"checkbox\" ng-model=\"ctrl.checkBoxAllModel\" ng-change=\"ctrl.checkBoxSelectAll()\">\n" +
+        "\r						        <span class=\"text\"></span>\n" +
+        "\r						    </label>\n" +
+        "\r						</div>\n" +
         "\r                </th>\n" +
         "\r                <th ng-style=\"{'width' : col.width ? col.width : 'auto'}\" class=\"col-lg-5 vertical-align-top\" ng-repeat=\"col in ctrl.columns\">\n" +
         "\r                   <span class=\"margin-bottom-10 col-xs-12 no-padding \"><i ng-if=\"col.icon\" ng-class=\"col.icon\"></i> {{ col.displayName | translate }}</span> \n" +

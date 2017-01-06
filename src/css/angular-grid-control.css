@@ -1,26 +1,26 @@
 .grid-control-item-selected {
     font-weight: bold;
-    background:  #5f5dab!important;
-    color: #FFF;
+    background:  #f1f1f1!important;
+    color: #8e8888;
 }
-
 .floatLeft {
     float: left !important;
 }
-
 .grid-control-column-check-box {
     width: 35px !important;
 }
-
 .grid-control-no-margin {
     margin: 0 !important;
 }
-
 .vertical-align-top {
     vertical-align: top;
 }
-
 .table-scrollable {
     overflow: scroll;
     padding-bottom: 0;
+}
+.grid-control-bg-table{
+    background-color: #5db2ff;
+    color: #FFF;
+    border-color: #57a7ef!important;
 }

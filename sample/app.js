@@ -42,15 +42,11 @@ app.controller('sampleSimpleGridCtrl', ["$scope", function ($scope) {
         },
         columns: [{
             field: "name",
-            displayName: "NameLabel",
-            filter: true,
-            filterType: "text"
+            displayName: "NameLabel"
         }, {
             field: "updateDate",
             displayName: "DateTimeLabel",
-            filter: true,
-            cellTemplate: "<span>{{ row[col.field] | date: 'dd/MM/yyyy HH:mm:ss' }}</span>",
-            filterType: "date"
+            cellTemplate: "<span>{{ row[col.field] | date: 'dd/MM/yyyy HH:mm:ss' }}</span>"
         }],
     };
 }]);
