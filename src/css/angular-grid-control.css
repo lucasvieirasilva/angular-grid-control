@@ -19,9 +19,3 @@
     overflow: scroll;
     padding-bottom: 0;
 }
-.grid-control-bg-table tr th{
-    background-color: #5db2ff;
-    color: #FFF;
-    border-color: #57a7ef!important;
-    vertical-align: middle!important;
-}
