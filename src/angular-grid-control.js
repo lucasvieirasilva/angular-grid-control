@@ -56,7 +56,7 @@ angular.module('template/grid', []).run(["$templateCache", function ($templateCa
 
     $templateCache.put("template/grid/simple-grid.html", "<div>\n" +
         "\r   <table class=\"table table-striped table-bordered table-hover\">\n" +
-        "\r       <thead class=\"grid-control-bg-table\">\n" +
+        "\r       <thead>\n" +
         "\r           <tr>\n" +
         "\r                <th ng-if=\"ctrl.checkbox\" class=\"col-lg-5 vertical-align-top grid-control-column-check-box \">\n" +
         "\r						<div class=\"checkbox grid-control-no-margin\">\n" +
@@ -93,7 +93,7 @@ angular.module('template/grid', []).run(["$templateCache", function ($templateCa
     $templateCache.put("template/grid/scroll-grid.html", "<div class=\"table-scrollable\" ng-style=\"{ height: ctrl.height ? ctrl.height : 'auto' }\">\n" +
         "\r <div>\n" +
         "\r   <table class=\"table table-striped table-bordered table-hover\">\n" +
-        "\r       <thead class=\"grid-control-bg-table\">\n" +
+        "\r       <thead>\n" +
         "\r           <tr>\n" +
         "\r                <th ng-if=\"ctrl.checkbox\" class=\"col-lg-5 vertical-align-top grid-control-column-check-box \">\n" +
         "\r						<div class=\"checkbox grid-control-no-margin\">\n" +
