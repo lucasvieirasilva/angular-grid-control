@@ -269,7 +269,7 @@ angular.module('angular-grid-control', ['template/grid'])
         };
 
         ctrl.isSelected = function (row) {
-            return ctrl.rowSelected == row || (ctrl.checkbox && row[ctrl.checkboxField]);
+            return ctrl.rowSelected == row;
         };
 
         $scope.params.update = function () {

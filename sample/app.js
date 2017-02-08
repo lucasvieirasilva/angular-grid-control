@@ -36,11 +36,12 @@ app.controller('sampleSimpleGridCtrl', ["$scope", function ($scope) {
 
     main.gridParams = {
         data: data,
+        selection: true,
         options: {
             type: "simple", // OR UNDEFINED
             checkbox: true,
             checkboxField: 'Associated',
-            async: false
+            async: false            
         },
         columns: [{
             field: "name",
