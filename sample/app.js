@@ -27,6 +27,7 @@ app.controller('sampleSimpleGridCtrl', ["$scope", function ($scope) {
         "updateDate": new Date()
     }, {
         "name": "Marry",
+        "Associated": true,
         "updateDate": new Date()
     }, {
         "name": "Doe",
@@ -38,6 +39,7 @@ app.controller('sampleSimpleGridCtrl', ["$scope", function ($scope) {
         options: {
             type: "simple", // OR UNDEFINED
             checkbox: true,
+            checkboxField: 'Associated',
             async: false
         },
         columns: [{
@@ -125,7 +127,7 @@ app.controller('sampleScrollGridCtrl', ["$scope", "$q", "$timeout", function ($s
             newData.push(item);
         }
 
-        $timeout(function (){
+        $timeout(function () {
             defer.resolve(newData);
         }, 500);
 

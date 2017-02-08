@@ -31,7 +31,7 @@ angular.module('template/grid', []).run(["$templateCache", function ($templateCa
         "\r                <td ng-if=\"ctrl.checkbox\" class=\"col-lg-5 vertical-align-top  grid-control-column-check-box\">\n" +
         "\r						<div class=\"checkbox grid-control-no-margin\">\n" +
         "\r						    <label>\n" +
-        "\r						        <input type=\"checkbox\" class=\"colored-blue\" ng-model=\"row.selected\" ng-change=\"ctrl.checkBoxSelection(row)\">\n" +
+        "\r						        <input type=\"checkbox\" class=\"colored-blue\" ng-model=\"row[ctrl.checkboxField]\" ng-change=\"ctrl.checkBoxSelection(row)\">\n" +
         "\r						        <span class=\"text\"></span>\n" +
         "\r						    </label>\n" +
         "\r						</div>\n" +
@@ -76,7 +76,7 @@ angular.module('template/grid', []).run(["$templateCache", function ($templateCa
         "\r                <td ng-if=\"ctrl.checkbox\" class=\"col-lg-5 vertical-align-top  grid-control-column-check-box\">\n" +
         "\r						<div class=\"checkbox grid-control-no-margin\">\n" +
         "\r						    <label>\n" +
-        "\r						        <input type=\"checkbox\" class=\"colored-blue\" ng-model=\"row.selected\" ng-change=\"ctrl.checkBoxSelection(row)\">\n" +
+        "\r						        <input type=\"checkbox\" class=\"colored-blue\" ng-model=\"row[ctrl.checkboxField]\" ng-change=\"ctrl.checkBoxSelection(row)\">\n" +
         "\r						        <span class=\"text\"></span>\n" +
         "\r						    </label>\n" +
         "\r						</div>\n" +
@@ -113,7 +113,7 @@ angular.module('template/grid', []).run(["$templateCache", function ($templateCa
         "\r                <td ng-if=\"ctrl.checkbox\" class=\"col-lg-5 vertical-align-top  grid-control-column-check-box\">\n" +
         "\r						<div class=\"checkbox grid-control-no-margin\">              \n" +
         "\r						    <label>                           \n" +
-        "\r						        <input type=\"checkbox\" class=\"colored-blue\" ng-model=\"row.selected\" ng-change=\"ctrl.checkBoxSelection(row)\">     \n" +
+        "\r						        <input type=\"checkbox\" class=\"colored-blue\" ng-model=\"row[ctrl.checkboxField]\" ng-change=\"ctrl.checkBoxSelection(row)\">     \n" +
         "\r						        <span class=\"text\"></span>  \n" +
         "\r						    </label>                          \n" +
         "\r						</div>                                \n" +
@@ -159,7 +159,7 @@ angular.module('angular-grid-control', ['template/grid'])
             },
             controller: 'gridControlController',
             controllerAs: 'ctrl',
-            link: function (scope, el, attr) {}
+            link: function (scope, el, attr) { }
         };
     })
     .directive('gcPagination', ["$q", function ($q) {
@@ -174,7 +174,7 @@ angular.module('angular-grid-control', ['template/grid'])
             },
             controller: 'gridControlController',
             controllerAs: 'ctrl',
-            link: function (scope, el, attr) {}
+            link: function (scope, el, attr) { }
         };
     }])
     .directive('gcScroll', ["$q", function ($q) {
@@ -269,7 +269,7 @@ angular.module('angular-grid-control', ['template/grid'])
         };
 
         ctrl.isSelected = function (row) {
-            return ctrl.rowSelected == row || (ctrl.checkbox && row.selected);
+            return ctrl.rowSelected == row || (ctrl.checkbox && row[ctrl.checkboxField]);
         };
 
         $scope.params.update = function () {
@@ -419,19 +419,26 @@ angular.module('angular-grid-control', ['template/grid'])
         }
 
         if ($scope.params.options && $scope.params.options.checkbox) {
+
+            ctrl.checkboxField = $scope.params.options.checkboxField;
+
+            if (!ctrl.checkboxField) {
+                ctrl.checkboxField = 'selected';
+            }
+
             ctrl.checkbox = $scope.params.options.checkbox;
 
             ctrl.checkBoxSelection = function (item) {
                 var value = ctrl.checkBoxAllModel;
 
-                if (value && !item.selected) {
-                    ctrl.checkBoxAllModel = item.selected;
+                if (value && !item[ctrl.checkboxField]) {
+                    ctrl.checkBoxAllModel = item[ctrl.checkboxField];
                 } else if (!value) {
                     if (ctrl.data) {
                         var allSelected = true;
 
                         ctrl.data.forEach(function (item) {
-                            if (!item.selected) {
+                            if (!item[ctrl.checkboxField]) {
                                 allSelected = false;
                             }
                         });
@@ -448,7 +455,7 @@ angular.module('angular-grid-control', ['template/grid'])
 
                 if (ctrl.data) {
                     ctrl.data.forEach(function (item) {
-                        item.selected = value;
+                        item[ctrl.checkboxField] = value;
                     });
                 }
             }
