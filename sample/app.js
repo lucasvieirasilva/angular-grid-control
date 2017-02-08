@@ -41,7 +41,7 @@ app.controller('sampleSimpleGridCtrl', ["$scope", function ($scope) {
             type: "simple", // OR UNDEFINED
             checkbox: true,
             checkboxField: 'Associated',
-            async: false            
+            async: false
         },
         columns: [{
             field: "name",
@@ -92,19 +92,19 @@ app.controller('samplePaginationGridCtrl', ["$scope", "$q", "$timeout", function
         options: {
             type: "pagination",
             checkbox: true,
-            async: true
+            async: true,
         },
         columns: [{
             field: "name",
             displayName: "NameLabel",
             filter: true,
-            filterType: "text"
+            filterType: "text",
         }, {
             field: "updateDate",
             displayName: "DateTimeLabel",
             filter: true,
             cellTemplate: "<span>{{ row[col.field] | date: 'dd/MM/yyyy HH:mm:ss' }}</span>",
-            filterType: "date"
+            filterType: "date",
         }],
     };
 }]);
@@ -141,19 +141,19 @@ app.controller('sampleScrollGridCtrl', ["$scope", "$q", "$timeout", function ($s
             type: "scroll",
             height: "350px",
             checkbox: true,
-            async: true
+            async: true,
         },
         columns: [{
             field: "name",
             displayName: "NameLabel",
             filter: true,
-            filterType: "text"
+            filterType: "text",
         }, {
             field: "updateDate",
             displayName: "DateTimeLabel",
             filter: true,
             cellTemplate: "<span>{{ row[col.field] | date: 'dd/MM/yyyy HH:mm:ss' }}</span>",
-            filterType: "date"
+            filterType: "date",
         }],
     };
 }]);

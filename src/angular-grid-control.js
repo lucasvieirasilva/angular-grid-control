@@ -294,7 +294,6 @@ angular.module('angular-grid-control', ['template/grid'])
                 ctrl.data = ctrl.getData();
                 defer.resolve(ctrl.data);
             }
-
             return defer.promise;
         }
 
