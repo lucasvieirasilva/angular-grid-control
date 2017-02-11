@@ -54,7 +54,7 @@ app.controller('sampleSimpleGridCtrl', ["$scope", function ($scope) {
     };
 }]);
 
-app.controller('samplePaginationGridCtrl', ["$scope", "$q", "$timeout", function ($scope, $q, $timeout) {
+app.controller('samplePaginationGridCtrl', ["$scope", "$q", "$timeout", "$filter", function ($scope, $q, $timeout, $filter) {
     var main = this;
 
     var dataRequest = function (request) {
@@ -91,20 +91,31 @@ app.controller('samplePaginationGridCtrl', ["$scope", "$q", "$timeout", function
         data: dataRequest,
         options: {
             type: "pagination",
+            tableClass: "table-striped",
+            pagination: {
+                itemsPerPageText: $filter("translate")("ItensPerPageLabel"),
+                firstText: $filter("translate")("FirstLabel"),
+                lastText: $filter("translate")("LastLabel"),
+                previousText: $filter("translate")("PreviousLabel"),
+                nextText: $filter("translate")("NextLabel"),
+                pagingInfoProperty: "pagingInfo",
+                pageSizeProperty: "pageSize",
+                pageIndexProperty: "pageIndex",
+                totalCountProperty: "totalCount",
+                hasNextPageProperty: "hasNextPage",
+                hasPreviousPageProperty: "hasPreviousPage",
+                itemsProperty: "items"
+            },
             checkbox: true,
             async: true,
         },
         columns: [{
             field: "name",
-            displayName: "NameLabel",
-            filter: true,
-            filterType: "text",
+            displayName: "NameLabel"
         }, {
             field: "updateDate",
             displayName: "DateTimeLabel",
-            filter: true,
-            cellTemplate: "<span>{{ row[col.field] | date: 'dd/MM/yyyy HH:mm:ss' }}</span>",
-            filterType: "date",
+            cellTemplate: "<span>{{ row[col.field] | date: 'dd/MM/yyyy HH:mm:ss' }}</span>"
         }],
     };
 }]);
