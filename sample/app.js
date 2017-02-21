@@ -37,6 +37,7 @@ app.controller('sampleSimpleGridCtrl', ["$scope", function ($scope) {
     main.gridParams = {
         data: data,
         selection: true,
+        selectedItem: data[2],
         options: {
             type: "simple", // OR UNDEFINED
             checkbox: true,

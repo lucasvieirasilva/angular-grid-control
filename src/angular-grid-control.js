@@ -228,7 +228,7 @@ angular.module('angular-grid-control', ['template/grid'])
         ctrl.select = function (row) {
             if ($scope.params.selection) {
 
-                ctrl.rowSelected = row;
+                $scope.params.selectedItem = row;
                 $scope.$emit('gridControl:selectItem', row);
             }
         };
@@ -260,10 +260,6 @@ angular.module('angular-grid-control', ['template/grid'])
             });
         }
 
-        ctrl.selectedItemHandler = function (item) {
-            ctrl.selectedItem = item;
-        };
-
         ctrl.rowCssClass = function (row) {
             return {
                 'danger': ctrl.error(row),
@@ -274,7 +270,7 @@ angular.module('angular-grid-control', ['template/grid'])
         };
 
         ctrl.isSelected = function (row) {
-            return ctrl.rowSelected == row;
+            return $scope.params.selectedItem == row;
         };
 
         $scope.params.update = function () {
