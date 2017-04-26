@@ -105,7 +105,8 @@ app.controller('samplePaginationGridCtrl', ["$scope", "$q", "$timeout", "$filter
                 totalCountProperty: "totalCount",
                 hasNextPageProperty: "hasNextPage",
                 hasPreviousPageProperty: "hasPreviousPage",
-                itemsProperty: "items"
+                itemsProperty: "items",
+                useItemsPerPage: false
             },
             checkbox: true,
             async: true,

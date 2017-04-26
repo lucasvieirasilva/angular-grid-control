@@ -45,7 +45,7 @@ angular.module('template/grid', []).run(["$templateCache", function ($templateCa
         "\r   </table>\n" +
         "\r   </div>\n" +
         "\r   <div ng-show=\"ctrl.showPagination\" class=\"grid-control-text-align-center grid-control-margin-top-20 grid-control-pagination-greed\" >\n" +
-        "\r         <div class=\"grid-control-floatLeft grid-control-number-pagination\">\n" +
+        "\r         <div ng-if=\"params.options.pagination.useItemsPerPage == true || params.options.pagination.useItemsPerPage == undefined\" class=\"grid-control-floatLeft grid-control-number-pagination\">\n" +
         "\r             <span>{{ ctrl.itemsPerPageText }}: </span>\n" +
         "\r             <select name=\"pageSize\" id=\"pageSize\" ng-options=\"option as option for option in ctrl.pageSizes\" ng-model=\"ctrl[ctrl.pagingInfoProperty][ctrl.pageSizeProperty]\"></select>\n" +
         "\r         </div>\n" +
@@ -370,10 +370,12 @@ angular.module('angular-grid-control', ['template/grid'])
 
             ctrl.pageSizes = [5, 10, 15, 20, 25, 30, 50, 100];
 
-            ctrl[ctrl.pagingInfoProperty] = {
-                pageSize: ctrl.pageSizes[0],
-                pageIndex: 1
-            };
+            ctrl[ctrl.pagingInfoProperty] = {};
+            ctrl[ctrl.pagingInfoProperty][ctrl.pageIndexProperty] = 1;
+            
+            if ($scope.params.options && $scope.params.options.pagination && !$scope.params.options.pagination.useItemsPerPage) {
+                ctrl[ctrl.pagingInfoProperty][ctrl.pageSizeProperty] = ctrl.pageSizes[0];
+            }
 
             ctrl[ctrl.pagingInfoProperty] = {};
             ctrl[ctrl.pagingInfoProperty][ctrl.pageSizeProperty] = ctrl.pageSizes[0];
@@ -392,6 +394,8 @@ angular.module('angular-grid-control', ['template/grid'])
             });
 
             var buildPaginationData = function (response) {
+                response[ctrl.pagingInfoProperty][ctrl.pageIndexProperty] += 1;
+
                 ctrl.data = response[ctrl.itemsProperty];
                 ctrl[ctrl.pagingInfoProperty] = response[ctrl.pagingInfoProperty];
 
@@ -404,7 +408,8 @@ angular.module('angular-grid-control', ['template/grid'])
 
                 var request = {};
 
-                request[ctrl.pagingInfoProperty] = ctrl[ctrl.pagingInfoProperty];
+                request[ctrl.pagingInfoProperty] = angular.copy(ctrl[ctrl.pagingInfoProperty]);
+                request[ctrl.pagingInfoProperty][ctrl.pageIndexProperty] -= 1;
 
                 ctrl.columns.forEach(function (col) {
                     if (col.filter) {
