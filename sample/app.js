@@ -90,6 +90,7 @@ app.controller('samplePaginationGridCtrl', ["$scope", "$q", "$timeout", "$filter
 
     main.gridParams = {
         data: dataRequest,
+        selection: true,
         options: {
             type: "pagination",
             tableClass: "table-striped",

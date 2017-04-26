@@ -27,7 +27,7 @@ angular.module('template/grid', []).run(["$templateCache", function ($templateCa
         "\r           </tr>\n" +
         "\r       </thead>\n" +
         "\r       <tbody>\n" +
-        "\r           <tr ng-repeat=\"row in ctrl.data\" ng-class=\"ctrl.rowCssClass(row)\">\n" +
+        "\r           <tr ng-repeat=\"row in ctrl.data\" ng-click=\"ctrl.select(row)\" ng-class=\"ctrl.rowCssClass(row)\">\n" +
         "\r                <td ng-if=\"ctrl.checkbox\" class=\"col-lg-5 vertical-align-top  grid-control-column-check-box\">\n" +
         "\r						<div class=\"checkbox grid-control-no-margin\">\n" +
         "\r						    <label>\n" +
