@@ -388,8 +388,6 @@ angular.module('angular-grid-control', ['template/grid'])
                     ctrl.buildData().then(function () {
                         $scope.$emit('gridControl:afterPageChanged');
                     });
-
-                    ctrl.checkBoxAllModel = false;
                 }
             });
 
@@ -417,11 +415,15 @@ angular.module('angular-grid-control', ['template/grid'])
                     }
                 });
 
+                ctrl.checkBoxAllModel = false;
+
                 var async = $scope.params.options && $scope.params.options.async;
 
                 if (async) {
                     ctrl.getData(request).then(function (response) {
                         buildPaginationData(response);
+
+                        $scope.params.currentData = ctrl.data;
 
                         defer.resolve(response);
                     }).catch(function (error) {
