@@ -58,6 +58,10 @@ app.controller('sampleSimpleGridCtrl', ["$scope", function ($scope) {
 app.controller('samplePaginationGridCtrl', ["$scope", "$q", "$timeout", "$filter", function ($scope, $q, $timeout, $filter) {
     var main = this;
 
+    this.doUpdate = function () {
+        this.gridParams.update();
+    }
+
     var dataRequest = function (request) {
         var defer = $q.defer();
 

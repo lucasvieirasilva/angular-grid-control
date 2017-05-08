@@ -159,7 +159,7 @@ angular.module('angular-grid-control', ['template/grid'])
             },
             controller: 'gridControlController',
             controllerAs: 'ctrl',
-            link: function (scope, el, attr) { }
+            link: function (scope, el, attr) {}
         };
     })
     .directive('gcPagination', ["$q", function ($q) {
@@ -174,7 +174,7 @@ angular.module('angular-grid-control', ['template/grid'])
             },
             controller: 'gridControlController',
             controllerAs: 'ctrl',
-            link: function (scope, el, attr) { }
+            link: function (scope, el, attr) {}
         };
     }])
     .directive('gcScroll', ["$q", function ($q) {
@@ -273,8 +273,8 @@ angular.module('angular-grid-control', ['template/grid'])
             return $scope.params.selectedItem == row;
         };
 
-        $scope.params.update = function () {
-            ctrl.buildData();
+        $scope.params.update = function (reset) {
+            ctrl.buildData(reset);
         };
 
         ctrl.buildData = function () {
@@ -318,7 +318,7 @@ angular.module('angular-grid-control', ['template/grid'])
                 if ($scope.params.options.pagination.itemsPerPageText) {
                     ctrl.itemsPerPageText = $scope.params.options.pagination.itemsPerPageText;
                 }
-                
+
                 if ($scope.params.options.pagination.firstText) {
                     ctrl.firstText = $scope.params.options.pagination.firstText;
                 }
@@ -326,7 +326,7 @@ angular.module('angular-grid-control', ['template/grid'])
                 if ($scope.params.options.pagination.lastText) {
                     ctrl.lastText = $scope.params.options.pagination.lastText;
                 }
-                
+
                 if ($scope.params.options.pagination.nextText) {
                     ctrl.nextText = $scope.params.options.pagination.nextText;
                 }
@@ -372,7 +372,7 @@ angular.module('angular-grid-control', ['template/grid'])
 
             ctrl[ctrl.pagingInfoProperty] = {};
             ctrl[ctrl.pagingInfoProperty][ctrl.pageIndexProperty] = 1;
-            
+
             if ($scope.params.options && $scope.params.options.pagination && !$scope.params.options.pagination.useItemsPerPage) {
                 ctrl[ctrl.pagingInfoProperty][ctrl.pageSizeProperty] = ctrl.pageSizes[0];
             }
@@ -397,17 +397,22 @@ angular.module('angular-grid-control', ['template/grid'])
                 ctrl.data = response[ctrl.itemsProperty];
                 ctrl[ctrl.pagingInfoProperty] = response[ctrl.pagingInfoProperty];
 
-                ctrl.showPagination = ctrl[ctrl.pagingInfoProperty][ctrl.hasNextPageProperty] || 
+                ctrl.showPagination = ctrl[ctrl.pagingInfoProperty][ctrl.hasNextPageProperty] ||
                     ctrl[ctrl.pagingInfoProperty][ctrl.hasPreviousPageProperty];
             }
 
-            ctrl.buildData = function () {
+            ctrl.buildData = function (reset) {
                 var defer = $q.defer();
 
                 var request = {};
 
+
                 request[ctrl.pagingInfoProperty] = angular.copy(ctrl[ctrl.pagingInfoProperty]);
                 request[ctrl.pagingInfoProperty][ctrl.pageIndexProperty] -= 1;
+
+                if (reset === true) {
+                    request[ctrl.pagingInfoProperty][ctrl.pageIndexProperty] = 0;
+                }
 
                 ctrl.columns.forEach(function (col) {
                     if (col.filter) {
