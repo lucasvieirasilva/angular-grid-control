@@ -15,8 +15,8 @@ angular.module('template/grid', []).run(["$templateCache", function ($templateCa
         "\r						</div>\n" +
         "\r                </th>\n" +
         "\r                <th ng-style=\"{'width' : col.width ? col.width : 'auto'}\" class=\"col-lg-5 vertical-align-top\" ng-repeat=\"col in ctrl.columns\">\n" +
-        "\r                   <span class=\"margin-bottom-10 col-xs-12 no-padding \"><i ng-if=\"col.icon\" ng-class=\"col.icon\"></i> {{ col.displayName | translate }}</span> \n" +
-        "\r                   <div class=\"input-group\" ng-if=\"col.filter && (col.filterType && col.filterType != 'date')\">\n" +
+        "\r                   <span class=\"col-xs-12 no-padding \"><i ng-if=\"col.icon\" ng-class=\"col.icon\"></i> {{ col.displayName | translate }}</span> \n" +
+        "\r                   <div class=\"margin-top-10 input-group\" ng-if=\"col.filter && (col.filterType && col.filterType != 'date')\">\n" +
         "\r                         <span class=\"input-group-addon\"><i class=\"glyphicon glyphicon-search\"></i></span>\n" +
         "\r                         <input class=\"form-control input-sm\" type=\"search\" ng-change=\"ctrl.searchData(col.filterValue)\"  ng-model=\"col.filterValue\" />\n" +
         "\r                   </div>\n" +
