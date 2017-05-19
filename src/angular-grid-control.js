@@ -373,13 +373,11 @@ angular.module('angular-grid-control', ['template/grid'])
             ctrl[ctrl.pagingInfoProperty] = {};
             ctrl[ctrl.pagingInfoProperty][ctrl.pageIndexProperty] = 1;
 
-            if ($scope.params.options && $scope.params.options.pagination && !$scope.params.options.pagination.useItemsPerPage) {
+            if ($scope.params.options && $scope.params.options.pagination && $scope.params.options.pagination.pageSize) {
+                ctrl[ctrl.pagingInfoProperty][ctrl.pageSizeProperty] = $scope.params.options.pagination.pageSize;
+            } else if ($scope.params.options && $scope.params.options.pagination && !$scope.params.options.pagination.useItemsPerPage) {
                 ctrl[ctrl.pagingInfoProperty][ctrl.pageSizeProperty] = ctrl.pageSizes[0];
             }
-
-            ctrl[ctrl.pagingInfoProperty] = {};
-            ctrl[ctrl.pagingInfoProperty][ctrl.pageSizeProperty] = ctrl.pageSizes[0];
-            ctrl[ctrl.pagingInfoProperty][ctrl.pageIndexProperty] = 1;
 
             $scope.$watch('ctrl[ctrl.pagingInfoProperty][ctrl.pageIndexProperty] + ctrl[ctrl.pagingInfoProperty][ctrl.pageSizeProperty]', function () {
                 if (!isSearching) {
@@ -405,7 +403,6 @@ angular.module('angular-grid-control', ['template/grid'])
                 var defer = $q.defer();
 
                 var request = {};
-
 
                 request[ctrl.pagingInfoProperty] = angular.copy(ctrl[ctrl.pagingInfoProperty]);
                 request[ctrl.pagingInfoProperty][ctrl.pageIndexProperty] -= 1;
