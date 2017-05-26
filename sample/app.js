@@ -2,7 +2,8 @@ var app = angular.module('app', [
     'ngAnimate',
     'ui.bootstrap',
     'pascalprecht.translate',
-    'angular-grid-control'
+    'angular-grid-control',
+    'vs-repeat'
 ]);
 
 app.config(["$translateProvider", function ($translateProvider) {
@@ -172,6 +173,39 @@ app.controller('sampleScrollGridCtrl', ["$scope", "$q", "$timeout", function ($s
             filter: true,
             cellTemplate: "<span>{{ row[col.field] | date: 'dd/MM/yyyy HH:mm:ss' }}</span>",
             filterType: "date",
+        }],
+    };
+}]);
+
+app.controller('sampleVsSimpleGridCtrl', ["$scope", function ($scope) {
+    var main = this;
+
+    var data = [];
+
+    for(var i = 0; i < 1000; i++) {
+        data.push({
+            name: "Test " + i,
+            "updateDate": new Date()
+        })
+    }
+
+    main.gridParams = {
+        data: data,
+        selection: true,
+        selectedItem: data[2],
+        options: {
+            type: "simple",
+            checkbox: true,
+            checkboxField: 'Associated',
+            async: false
+        },
+        columns: [{
+            field: "name",
+            displayName: "NameLabel"
+        }, {
+            field: "updateDate",
+            displayName: "DateTimeLabel",
+            cellTemplate: "<span>{{ row[col.field] | date: 'dd/MM/yyyy HH:mm:ss' }}</span>"
         }],
     };
 }]);
