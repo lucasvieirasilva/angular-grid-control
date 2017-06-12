@@ -22,6 +22,10 @@ app.config(["$translateProvider", function ($translateProvider) {
 app.controller('sampleSimpleGridCtrl', ["$scope", function ($scope) {
     var main = this;
 
+    main.onSelectItem = function ($item) {
+        alert("the selected item is " + $item.name);
+    }
+
     var data = [{
         "name": "Joe",
         "updateDate": new Date()

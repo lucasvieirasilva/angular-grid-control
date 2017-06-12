@@ -16,7 +16,7 @@
     <div ng-controller="sampleSimpleGridCtrl as main">
         <div class="row">
             <div class="col-lg-8" style="margin: 30px">
-                <gc-simple params="main.gridParams"></gc-simple>
+                <gc-simple on-select="main.onSelectItem" params="main.gridParams"></gc-simple>
             </div>
         </div>
     </div>
