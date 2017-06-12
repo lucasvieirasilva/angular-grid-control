@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8" />
-    <title>Pagination grid</title>
+    <title>VS Simple-grid</title>
     <meta name="description" content="blank page" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -13,14 +13,10 @@
 </head>
 
 <body>
-    <div ng-controller="samplePaginationGridCtrl as main">
-        <div class="row">
-            <input type="button" ng-click="main.doUpdate()" value="Atualizar"/> 
-            <div class="col-lg-10" style="margin: 30px">
-                <gc-pagination params="main.gridParams"></gc-pagination>
-            </div>
-        </div>
+    <div ng-controller="sampleVsSimpleGridCtrl as main">
+        <gc-vs-simple params="main.gridParams"></gc-vs-simple>
     </div>
+    
     <!-- Scripts -->
     <script src="lib/jquery/jquery.min.js"></script>
     <script src="lib/bootstrap/js/bootstrap.min.js"></script>

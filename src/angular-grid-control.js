@@ -15,8 +15,8 @@ angular.module('template/grid', []).run(["$templateCache", function ($templateCa
         "\r						</div>\n" +
         "\r                </th>\n" +
         "\r                <th ng-style=\"{'width' : col.width ? col.width : 'auto'}\" class=\"col-lg-5 vertical-align-top\" ng-repeat=\"col in ctrl.columns\">\n" +
-        "\r                   <span class=\"margin-bottom-10 col-xs-12 no-padding \"><i ng-if=\"col.icon\" ng-class=\"col.icon\"></i> {{ col.displayName | translate }}</span> \n" +
-        "\r                   <div class=\"input-group\" ng-if=\"col.filter && (col.filterType && col.filterType != 'date')\">\n" +
+        "\r                   <span class=\"col-xs-12 no-padding \"><i ng-if=\"col.icon\" ng-class=\"col.icon\"></i> {{ col.displayName | translate }}</span> \n" +
+        "\r                   <div class=\"margin-top-10 input-group\" ng-if=\"col.filter && (col.filterType && col.filterType != 'date')\">\n" +
         "\r                         <span class=\"input-group-addon\"><i class=\"glyphicon glyphicon-search\"></i></span>\n" +
         "\r                         <input class=\"form-control input-sm\" type=\"search\" ng-change=\"ctrl.searchData(col.filterValue)\"  ng-model=\"col.filterValue\" />\n" +
         "\r                   </div>\n" +
@@ -127,26 +127,60 @@ angular.module('template/grid', []).run(["$templateCache", function ($templateCa
         "\r   </table>\n" +
         "\r   </div>\n" +
         "</div>");
+
+    $templateCache.put("template/grid/vs-simple-grid.html",
+        "<div class=\"vs-table-scroll\">\n" +
+        "\r   <table ng-class=\"ctrl.tableClass\" class=\"table\">\n" +
+        "\r       <thead>\n" +
+        "\r           <tr>\n" +
+        "\r                <th ng-if=\"ctrl.checkbox\" class=\"col-lg-5 vertical-align-top grid-control-column-check-box\">\n" +
+        "\r						<div class=\"checkbox grid-control-no-margin\">\n" +
+        "\r						    <label>\n" +
+        "\r						        <input type=\"checkbox\" class=\"colored-blue\" ng-model=\"ctrl.checkBoxAllModel\" ng-change=\"ctrl.checkBoxSelectAll()\">\n" +
+        "\r						        <span class=\"text\"></span>\n" +
+        "\r						    </label>\n" +
+        "\r						</div>\n" +
+        "\r                </th>\n" +
+        "\r                <th ng-style=\"{'width' : col.width ? col.width : 'auto'}\" class=\"col-lg-5 vertical-align-top\" ng-repeat=\"col in ctrl.columns\">\n" +
+        "\r                   <span><i ng-if=\"col.icon\" ng-class=\"col.icon\"></i> {{ col.displayName | translate }}</span>\n" +
+        "\r                </th>\n" +
+        "\r           </tr>\n" +
+        "\r       </thead>\n" +
+        "\r       <tbody vs-repeat vs-scroll-parent=\".vs-table-scroll\">\n" +
+        "\r           <tr ng-repeat=\"row in ctrl.data\" ng-click=\"ctrl.select(row)\" ng-class=\"ctrl.rowCssClass(row)\">\n" +
+        "\r                <td ng-if=\"ctrl.checkbox\" class=\"col-lg-5 vertical-align-top grid-control-column-check-box\">\n" +
+        "\r						<div class=\"checkbox grid-control-no-margin\">\n" +
+        "\r						    <label>\n" +
+        "\r						        <input type=\"checkbox\" class=\"colored-blue\" ng-model=\"row[ctrl.checkboxField]\" ng-change=\"ctrl.checkBoxSelection(row)\">\n" +
+        "\r						        <span class=\"text\"></span>\n" +
+        "\r						    </label>\n" +
+        "\r						</div>\n" +
+        "\r               </td>\n" +
+        "\r               <td ng-repeat=\"col in ctrl.columns\">\n" +
+        "\r                   <span ng-if=\"col.cellTemplate\" gc-compile=\"col.cellTemplate\" cell-template-scope=\"col.cellTemplateScope\"></span>\n" +
+        "\r                   <span ng-if=\"!col.cellTemplate\">{{row[col.field]}}</span>\n" +
+        "\r               </td>\n" +
+        "\r           </tr>\n" +
+        "\r       </tbody>\n" +
+        "\r   </table>\n" +
+        "</div>");
 }]);
 
 angular.module('angular-grid-control', ['template/grid'])
-    .directive('gcCompile', [
-        '$compile',
-        function ($compile) {
-            return {
-                restrict: 'EA',
-                link: function (scope, element, attrs) {
-                    scope.cellTemplateScope = scope.$eval(attrs.cellTemplateScope);
+    .directive('gcCompile', ['$compile', function ($compile) {
+        return {
+            restrict: 'EA',
+            link: function (scope, element, attrs) {
+                scope.cellTemplateScope = scope.$eval(attrs.cellTemplateScope);
 
-                    scope.$watch(attrs.gcCompile, function (new_val) {
-                        var link = $compile(new_val);
-                        var new_elem = link(scope);
-                        element.append(new_elem);
-                    });
-                }
-            };
-        }
-    ])
+                scope.$watch(attrs.gcCompile, function (new_val) {
+                    var link = $compile(new_val);
+                    var new_elem = link(scope);
+                    element.append(new_elem);
+                });
+            }
+        };
+    }])
     .directive('gcSimple', function () {
         return {
             restrict: 'E',
@@ -161,6 +195,24 @@ angular.module('angular-grid-control', ['template/grid'])
             controller: 'gridControlController',
             controllerAs: 'ctrl',
             link: function (scope, el, attr) {}
+<<<<<<< HEAD
+=======
+        };
+    })
+    .directive('gcVsSimple', function () {
+        return {
+            restrict: 'E',
+            templateUrl: function (tElement, tAttrs) {
+                return tAttrs.templateUrl || "template/grid/vs-simple-grid.html"
+            },
+            scope: {
+                params: '=',
+                selectedItem: '='
+            },
+            controller: 'gridControlController',
+            controllerAs: 'ctrl',
+            link: function (scope, el, attr) {}
+>>>>>>> 7b2552fb444a06ea9fbf17be436437cdac37160c
         };
     })
     .directive('gcPagination', ["$q", function ($q) {
@@ -248,7 +300,6 @@ angular.module('angular-grid-control', ['template/grid'])
             return false;
         };
 
-
         ctrl.warning = function (row) {
             if ($scope.params.callbacks && $scope.params.callbacks.warning) {
                 return $scope.params.callbacks.warning(row);
@@ -280,8 +331,8 @@ angular.module('angular-grid-control', ['template/grid'])
             return $scope.params.selectedItem == row;
         };
 
-        $scope.params.update = function () {
-            ctrl.buildData();
+        $scope.params.update = function (reset) {
+            ctrl.buildData(reset);
         };
 
         ctrl.buildData = function () {
@@ -380,13 +431,15 @@ angular.module('angular-grid-control', ['template/grid'])
             ctrl[ctrl.pagingInfoProperty] = {};
             ctrl[ctrl.pagingInfoProperty][ctrl.pageIndexProperty] = 1;
 
+<<<<<<< HEAD
             if ($scope.params.options && $scope.params.options.pagination && !$scope.params.options.pagination.useItemsPerPage) {
+=======
+            if ($scope.params.options && $scope.params.options.pagination && $scope.params.options.pagination.pageSize) {
+                ctrl[ctrl.pagingInfoProperty][ctrl.pageSizeProperty] = $scope.params.options.pagination.pageSize;
+            } else if ($scope.params.options && $scope.params.options.pagination && !$scope.params.options.pagination.useItemsPerPage) {
+>>>>>>> 7b2552fb444a06ea9fbf17be436437cdac37160c
                 ctrl[ctrl.pagingInfoProperty][ctrl.pageSizeProperty] = ctrl.pageSizes[0];
             }
-
-            ctrl[ctrl.pagingInfoProperty] = {};
-            ctrl[ctrl.pagingInfoProperty][ctrl.pageSizeProperty] = ctrl.pageSizes[0];
-            ctrl[ctrl.pagingInfoProperty][ctrl.pageIndexProperty] = 1;
 
             $scope.$watch('ctrl[ctrl.pagingInfoProperty][ctrl.pageIndexProperty] + ctrl[ctrl.pagingInfoProperty][ctrl.pageSizeProperty]', function () {
                 if (!isSearching) {
@@ -404,17 +457,26 @@ angular.module('angular-grid-control', ['template/grid'])
                 ctrl.data = response[ctrl.itemsProperty];
                 ctrl[ctrl.pagingInfoProperty] = response[ctrl.pagingInfoProperty];
 
+<<<<<<< HEAD
                 ctrl.showPagination = ctrl[ctrl.pagingInfoProperty][ctrl.hasNextPageProperty] ||
                     ctrl[ctrl.pagingInfoProperty][ctrl.hasPreviousPageProperty];
             }
+=======
+                ctrl.showPagination = ctrl[ctrl.pagingInfoProperty][ctrl.hasNextPageProperty] || ctrl[ctrl.pagingInfoProperty][ctrl.hasPreviousPageProperty];
+            };
+>>>>>>> 7b2552fb444a06ea9fbf17be436437cdac37160c
 
-            ctrl.buildData = function () {
+            ctrl.buildData = function (reset) {
                 var defer = $q.defer();
 
                 var request = {};
 
                 request[ctrl.pagingInfoProperty] = angular.copy(ctrl[ctrl.pagingInfoProperty]);
                 request[ctrl.pagingInfoProperty][ctrl.pageIndexProperty] -= 1;
+
+                if (reset === true) {
+                    request[ctrl.pagingInfoProperty][ctrl.pageIndexProperty] = 0;
+                }
 
                 ctrl.columns.forEach(function (col) {
                     if (col.filter) {
@@ -465,7 +527,7 @@ angular.module('angular-grid-control', ['template/grid'])
                 }
 
                 ctrl.data = ctrl.data.concat(response);
-            }
+            };
 
             ctrl.buildData = function () {
                 var defer = $q.defer();

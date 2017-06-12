@@ -1,20 +1,25 @@
 .grid-control-item-selected {
     font-weight: 600;
-    background:  #f1f1f1!important;
+    background: #f1f1f1!important;
     color: #8e8888;
 }
+
 .grid-control-floatLeft {
     float: left !important;
 }
+
 .grid-control-column-check-box {
     width: 35px !important;
 }
+
 .grid-control-no-margin {
     margin: 0 !important;
 }
+
 .vertical-align-top {
     vertical-align: top;
 }
+
 .table-scrollable {
     overflow: scroll;
     padding-bottom: 0;
@@ -39,6 +44,12 @@
 
 .grid-control-margin-top-20 {
     margin-top: 20px!important;
+}
+
+.vs-table-scroll {
+    overflow-x: scroll;
+    overflow-y: scroll;
+    height: 300px;
 }
 
 .pagination {
