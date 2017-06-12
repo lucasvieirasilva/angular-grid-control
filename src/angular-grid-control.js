@@ -287,6 +287,10 @@ angular.module('angular-grid-control', ['template/grid'])
                 if ($scope.onSelect instanceof Function) {
                     $scope.onSelect(row);
                 }
+
+                if ($scope.params.events && $scope.params.events.onSelectItem instanceof Function) {
+                    $scope.params.events.onSelectItem(row);
+                }
             }
         };
 
