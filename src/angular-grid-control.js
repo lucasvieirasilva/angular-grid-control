@@ -195,8 +195,6 @@ angular.module('angular-grid-control', ['template/grid'])
             controller: 'gridControlController',
             controllerAs: 'ctrl',
             link: function (scope, el, attr) {}
-<<<<<<< HEAD
-=======
         };
     })
     .directive('gcVsSimple', function () {
@@ -207,12 +205,12 @@ angular.module('angular-grid-control', ['template/grid'])
             },
             scope: {
                 params: '=',
-                selectedItem: '='
+                selectedItem: '=',
+                onSelect: '='
             },
             controller: 'gridControlController',
             controllerAs: 'ctrl',
             link: function (scope, el, attr) {}
->>>>>>> 7b2552fb444a06ea9fbf17be436437cdac37160c
         };
     })
     .directive('gcPagination', ["$q", function ($q) {
@@ -431,13 +429,9 @@ angular.module('angular-grid-control', ['template/grid'])
             ctrl[ctrl.pagingInfoProperty] = {};
             ctrl[ctrl.pagingInfoProperty][ctrl.pageIndexProperty] = 1;
 
-<<<<<<< HEAD
-            if ($scope.params.options && $scope.params.options.pagination && !$scope.params.options.pagination.useItemsPerPage) {
-=======
             if ($scope.params.options && $scope.params.options.pagination && $scope.params.options.pagination.pageSize) {
                 ctrl[ctrl.pagingInfoProperty][ctrl.pageSizeProperty] = $scope.params.options.pagination.pageSize;
             } else if ($scope.params.options && $scope.params.options.pagination && !$scope.params.options.pagination.useItemsPerPage) {
->>>>>>> 7b2552fb444a06ea9fbf17be436437cdac37160c
                 ctrl[ctrl.pagingInfoProperty][ctrl.pageSizeProperty] = ctrl.pageSizes[0];
             }
 
@@ -457,14 +451,8 @@ angular.module('angular-grid-control', ['template/grid'])
                 ctrl.data = response[ctrl.itemsProperty];
                 ctrl[ctrl.pagingInfoProperty] = response[ctrl.pagingInfoProperty];
 
-<<<<<<< HEAD
-                ctrl.showPagination = ctrl[ctrl.pagingInfoProperty][ctrl.hasNextPageProperty] ||
-                    ctrl[ctrl.pagingInfoProperty][ctrl.hasPreviousPageProperty];
-            }
-=======
                 ctrl.showPagination = ctrl[ctrl.pagingInfoProperty][ctrl.hasNextPageProperty] || ctrl[ctrl.pagingInfoProperty][ctrl.hasPreviousPageProperty];
             };
->>>>>>> 7b2552fb444a06ea9fbf17be436437cdac37160c
 
             ctrl.buildData = function (reset) {
                 var defer = $q.defer();
