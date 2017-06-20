@@ -435,7 +435,9 @@ angular.module('angular-grid-control', ['template/grid'])
 
             if ($scope.params.options && $scope.params.options.pagination && $scope.params.options.pagination.pageSize) {
                 ctrl[ctrl.pagingInfoProperty][ctrl.pageSizeProperty] = $scope.params.options.pagination.pageSize;
-            } else if ($scope.params.options && $scope.params.options.pagination && !$scope.params.options.pagination.useItemsPerPage) {
+            } else if ($scope.params.options && 
+                (!$scope.params.options.pagination || 
+                    ($scope.params.options.pagination && !$scope.params.options.pagination.useItemsPerPage))) {
                 ctrl[ctrl.pagingInfoProperty][ctrl.pageSizeProperty] = ctrl.pageSizes[0];
             }
 
