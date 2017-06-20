@@ -277,7 +277,7 @@ angular.module('angular-grid-control', ['template/grid'])
         ctrl.columns = $scope.params.columns;
 
         var isSearching = false;
-        var isFilteredSearch = false;
+        var isPageIndexReseted = false;
 
         ctrl.select = function (row) {
             if ($scope.params.selection) {
@@ -314,7 +314,7 @@ angular.module('angular-grid-control', ['template/grid'])
         ctrl.searchData = function (value) {
             isSearching = true;
 
-            ctrl.buildData().then(function (data) {
+            ctrl.buildData(true).then(function (data) {
                 isSearching = false;
             }).catch(function (error) {
                 isSearching = false;
@@ -443,8 +443,8 @@ angular.module('angular-grid-control', ['template/grid'])
             }
 
             $scope.$watch('ctrl[ctrl.pagingInfoProperty][ctrl.pageIndexProperty] + ctrl[ctrl.pagingInfoProperty][ctrl.pageSizeProperty]', function () {
-                if (isFilteredSearch) {
-                    isFilteredSearch = false;
+                if (isPageIndexReseted) {
+                    isPageIndexReseted = false;
                     return;
                 }
 
@@ -474,7 +474,7 @@ angular.module('angular-grid-control', ['template/grid'])
                 request[ctrl.pagingInfoProperty] = angular.copy(ctrl[ctrl.pagingInfoProperty]);
                 request[ctrl.pagingInfoProperty][ctrl.pageIndexProperty] -= 1;
 
-                isFilteredSearch = false;
+                var isFilteredSearch = false;
 
                 ctrl.columns.forEach(function (col) {
                     if (col.filter) {
@@ -486,7 +486,9 @@ angular.module('angular-grid-control', ['template/grid'])
                     }
                 });
 
-                if (reset === true) {
+                if (reset === true && isFilteredSearch) {
+                    isPageIndexReseted = request[ctrl.pagingInfoProperty][ctrl.pageIndexProperty] != 0;
+
                     request[ctrl.pagingInfoProperty][ctrl.pageIndexProperty] = 0;
                 }
 
