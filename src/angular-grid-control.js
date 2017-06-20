@@ -277,6 +277,7 @@ angular.module('angular-grid-control', ['template/grid'])
         ctrl.columns = $scope.params.columns;
 
         var isSearching = false;
+        var isFilteredSearch = false;
 
         ctrl.select = function (row) {
             if ($scope.params.selection) {
@@ -442,6 +443,11 @@ angular.module('angular-grid-control', ['template/grid'])
             }
 
             $scope.$watch('ctrl[ctrl.pagingInfoProperty][ctrl.pageIndexProperty] + ctrl[ctrl.pagingInfoProperty][ctrl.pageSizeProperty]', function () {
+                if (isFilteredSearch) {
+                    isFilteredSearch = false;
+                    return;
+                }
+
                 if (!isSearching) {
                     $scope.$emit('gridControl:beforePageChanged');
 
@@ -468,19 +474,19 @@ angular.module('angular-grid-control', ['template/grid'])
                 request[ctrl.pagingInfoProperty] = angular.copy(ctrl[ctrl.pagingInfoProperty]);
                 request[ctrl.pagingInfoProperty][ctrl.pageIndexProperty] -= 1;
 
-                var hasFilter = false;
+                isFilteredSearch = false;
 
                 ctrl.columns.forEach(function (col) {
                     if (col.filter) {
                         if (col.filterValue) {
-                            hasFilter = true;
+                            isFilteredSearch = true;
                         }
 
                         request[col.field] = col.filterValue;
                     }
                 });
 
-                if (reset === true || hasFilter) {
+                if (reset === true || isFilteredSearch) {
                     request[ctrl.pagingInfoProperty][ctrl.pageIndexProperty] = 0;
                 }
 
