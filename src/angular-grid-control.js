@@ -486,7 +486,7 @@ angular.module('angular-grid-control', ['template/grid'])
                     }
                 });
 
-                if (reset === true || isFilteredSearch) {
+                if (reset === true) {
                     request[ctrl.pagingInfoProperty][ctrl.pageIndexProperty] = 0;
                 }
 
