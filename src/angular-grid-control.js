@@ -466,15 +466,21 @@ angular.module('angular-grid-control', ['template/grid'])
                 request[ctrl.pagingInfoProperty] = angular.copy(ctrl[ctrl.pagingInfoProperty]);
                 request[ctrl.pagingInfoProperty][ctrl.pageIndexProperty] -= 1;
 
-                if (reset === true) {
-                    request[ctrl.pagingInfoProperty][ctrl.pageIndexProperty] = 0;
-                }
+                var hasFilter = false;
 
                 ctrl.columns.forEach(function (col) {
                     if (col.filter) {
+                        if (col.filterValue) {
+                            hasFilter = true;
+                        }
+
                         request[col.field] = col.filterValue;
                     }
                 });
+
+                if (reset === true || hasFilter) {
+                    request[ctrl.pagingInfoProperty][ctrl.pageIndexProperty] = 0;
+                }
 
                 ctrl.checkBoxAllModel = false;
 
