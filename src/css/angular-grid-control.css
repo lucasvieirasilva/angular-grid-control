@@ -4,6 +4,12 @@
     color: #8e8888;
 }
 
+.grid-control-multiple-selected {
+    font-weight: 600;
+    background: #cce8f7!important;
+    color: #8e8888;
+}
+
 .grid-control-floatLeft {
     float: left !important;
 }

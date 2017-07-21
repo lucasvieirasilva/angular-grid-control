@@ -147,7 +147,7 @@ angular.module('template/grid', []).run(["$templateCache", function ($templateCa
         "\r           </tr>\n" +
         "\r       </thead>\n" +
         "\r       <tbody vs-repeat vs-scroll-parent=\".vs-table-scroll\">\n" +
-        "\r           <tr ng-repeat=\"row in ctrl.data\" ng-click=\"ctrl.select(row)\" ng-class=\"ctrl.rowCssClass(row)\">\n" +
+        "\r           <tr ng-repeat=\"row in ctrl.data\" ng-click=\"ctrl.select(row, $event)\" ng-class=\"ctrl.rowCssClass(row)\">\n" +
         "\r                <td ng-if=\"ctrl.checkbox\" class=\"col-lg-5 vertical-align-top grid-control-column-check-box\">\n" +
         "\r						<div class=\"checkbox grid-control-no-margin\">\n" +
         "\r						    <label>\n" +
@@ -165,6 +165,27 @@ angular.module('template/grid', []).run(["$templateCache", function ($templateCa
         "\r   </table>\n" +
         "</div>");
 }]);
+
+var gcSimpleLink = function (scope, el, attr) {
+    if (scope.params.multipleSelection) {
+        el.attr('tabIndex', 0);
+
+        el.bind('keyup', function (e) {
+            if (e.ctrlKey && e.keyCode == 65) {
+                scope.ctrl.selectAll();
+            }
+            e.preventDefault();
+            return false;
+        });
+
+        el.bind('keydown', function (e) {
+            if (e.ctrlKey) {
+                e.preventDefault();
+                return false;
+            }
+        });
+    }
+}
 
 angular.module('angular-grid-control', ['template/grid'])
     .directive('gcCompile', ['$compile', function ($compile) {
@@ -194,7 +215,7 @@ angular.module('angular-grid-control', ['template/grid'])
             },
             controller: 'gridControlController',
             controllerAs: 'ctrl',
-            link: function (scope, el, attr) {}
+            link: gcSimpleLink
         };
     })
     .directive('gcVsSimple', function () {
@@ -210,7 +231,7 @@ angular.module('angular-grid-control', ['template/grid'])
             },
             controller: 'gridControlController',
             controllerAs: 'ctrl',
-            link: function (scope, el, attr) {}
+            link: gcSimpleLink
         };
     })
     .directive('gcPagination', ["$q", function ($q) {
@@ -226,7 +247,7 @@ angular.module('angular-grid-control', ['template/grid'])
             },
             controller: 'gridControlController',
             controllerAs: 'ctrl',
-            link: function (scope, el, attr) {}
+            link: function (scope, el, attr) { }
         };
     }])
     .directive('gcScroll', ["$q", function ($q) {
@@ -254,13 +275,35 @@ angular.module('angular-grid-control', ['template/grid'])
             }
         };
     }])
-    .controller('gridControlController', ["$scope", "$q", "$element", function ($scope, $q, $element) {
+    .controller('gridControlController', ["$scope", "$q", "$element", '$timeout', function ($scope, $q, $element, $timeout) {
 
         var ctrl = this;
+
+        $scope.safeApply = function (fn) {
+            var phase = this.$root.$$phase;
+            if (phase == '$apply' || phase == '$digest') {
+                if (fn && (typeof (fn) === 'function')) {
+                    fn();
+                }
+            } else {
+                this.$apply(fn);
+            }
+        };
 
         ctrl.data = [];
         ctrl.height = null;
         ctrl.tableClass = "table-striped table-bordered table-hover";
+        ctrl.selectedRows = [];
+        $scope.multipleSelected = false;
+
+
+        ctrl.selectAll = function () {
+            ctrl.selectRows(undefined);
+        }
+
+        ctrl.deselectAll = function () {
+            ctrl.deselectRows(undefined);
+        }
 
         if ($scope.params.data) {
             ctrl.data = $scope.params.data;
@@ -279,18 +322,65 @@ angular.module('angular-grid-control', ['template/grid'])
         var isSearching = false;
         var isPageIndexReseted = false;
 
-        ctrl.select = function (row) {
-            if ($scope.params.selection) {
+        ctrl.select = function (row, $event) {
+            if ($scope.params.selection && !$event.ctrlKey) {
 
                 $scope.params.selectedItem = row;
                 $scope.$emit('gridControl:selectItem', row);
-
+                ctrl.deselectAll();
                 if ($scope.onSelect instanceof Function) {
                     $scope.onSelect(row);
                 }
 
                 if ($scope.params.events && $scope.params.events.onSelectItem instanceof Function) {
                     $scope.params.events.onSelectItem(row);
+                }
+            }
+
+            if ($scope.params.multipleSelection && $event.ctrlKey) {
+                if ($scope.params.selectedItem && ctrl.selectedRows.indexOf($scope.params.selectedItem) == -1) {
+                    ctrl.selectedRows.push($scope.params.selectedItem);
+                } else if (angular.equals($scope.params.selectedItem, row)) {
+                    $scope.params.selectedItem = undefined;
+                }
+
+                if (ctrl.selectedRows && ctrl.selectedRows.indexOf(row) >= 0) {
+                    if (ctrl.selectedRows.length > 1) {
+                        ctrl.deselectRows(row);
+                    }
+                } else {
+                    ctrl.selectRows(row);
+                }
+            }
+        };
+
+        ctrl.selectRows = function (row) {
+            $scope.multipleSelected = true;
+
+            if (row) {
+                ctrl.selectedRows.push(row);
+            } else {
+                ctrl.selectedRows = ctrl.data.concat([]);
+            }
+
+            if ($scope.params.events && $scope.params.events.onMultipleSelectItem instanceof Function) {
+                $scope.params.events.onMultipleSelectItem(ctrl.selectedRows);
+            }
+        };
+
+        ctrl.deselectRows = function (row) {
+            if (row) {
+                ctrl.selectedRows.splice(ctrl.selectedRows.indexOf(row), 1);
+            } else {
+                ctrl.selectedRows = [];
+                $scope.multipleSelected = false;
+            }
+
+            if ($scope.params.events && $scope.params.events.onMultipleSelectItem instanceof Function) {
+                if (ctrl.selectedRows && ctrl.selectedRows.length > 0) {
+                    $scope.params.events.onMultipleSelectItem(ctrl.selectedRows);
+                } else {
+                    $scope.params.events.onMultipleSelectItem(undefined);
                 }
             }
         };
@@ -326,7 +416,8 @@ angular.module('angular-grid-control', ['template/grid'])
                 'danger': ctrl.error(row),
                 'warning': ctrl.warning(row),
                 'cursor-pointer': $scope.params.selection,
-                'grid-control-item-selected': ctrl.isSelected(row)
+                'grid-control-item-selected': ctrl.isSelected(row),
+                'grid-control-multiple-selected': ctrl.IsMultipleSelected(row)
             };
         };
 
@@ -337,6 +428,10 @@ angular.module('angular-grid-control', ['template/grid'])
         $scope.params.update = function (reset) {
             ctrl.buildData(reset);
         };
+
+        ctrl.IsMultipleSelected = function (row) {
+            return $scope.multipleSelected && ctrl.selectedRows.indexOf(row) >= 0;
+        }
 
         ctrl.buildData = function () {
             var defer = $q.defer();
@@ -436,8 +531,8 @@ angular.module('angular-grid-control', ['template/grid'])
 
             if ($scope.params.options && $scope.params.options.pagination && $scope.params.options.pagination.pageSize) {
                 ctrl[ctrl.pagingInfoProperty][ctrl.pageSizeProperty] = $scope.params.options.pagination.pageSize;
-            } else if ($scope.params.options && 
-                (!$scope.params.options.pagination || 
+            } else if ($scope.params.options &&
+                (!$scope.params.options.pagination ||
                     ($scope.params.options.pagination && !$scope.params.options.pagination.useItemsPerPage))) {
                 ctrl[ctrl.pagingInfoProperty][ctrl.pageSizeProperty] = ctrl.pageSizes[0];
             }
