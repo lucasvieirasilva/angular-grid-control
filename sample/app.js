@@ -65,7 +65,7 @@ app.controller('samplePaginationGridCtrl', ["$scope", "$q", "$timeout", "$filter
 
     this.doUpdate = function () {
         this.gridParams.update();
-    }
+    };
 
     var dataRequest = function (request) {
         var defer = $q.defer();
