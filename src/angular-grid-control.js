@@ -67,12 +67,17 @@ angular.module('template/grid', []).run(["$templateCache", function ($templateCa
         "\r						</div>\n" +
         "\r                </th>\n" +
         "\r                <th ng-style=\"{'width' : col.width ? col.width : 'auto'}\" class=\"col-lg-5 vertical-align-top\" ng-repeat=\"col in ctrl.columns\">\n" +
-        "\r                   <span><i ng-if=\"col.icon\" ng-class=\"col.icon\"></i> {{ col.displayName | translate }}</span>\n" +
+        "\r                   <span ng-if=\"!col.sort\"><i ng-if=\"col.icon\" ng-class=\"col.icon\"></i> {{ col.displayName | translate }}</span>\n" +
+        "\r                   <a ng-if=\"col.sort\" class=\"white\" href=\"javascript:void(0);\" ng-click=\"ctrl.orderByGrid(col.field)\">\n" +
+        "\r                       {{ col.displayName | translate }}\n" +
+        "\r                       <span ng-show=\"ctrl.colSort == col.field && !ctrl.reverse\" class=\"fa fa-caret-down\"></span>\n" +
+        "\r                       <span ng-show=\"ctrl.colSort == col.field && ctrl.reverse\" class=\"fa fa-caret-up\"></span>\n" +
+        "\r                   </a>\n" +
         "\r                </th>\n" +
         "\r           </tr>\n" +
         "\r       </thead>\n" +
         "\r       <tbody>\n" +
-        "\r           <tr ng-repeat=\"row in ctrl.data\" ng-click=\"ctrl.select(row, $event)\" ng-class=\"ctrl.rowCssClass(row)\">\n" +
+        "\r           <tr ng-repeat=\"row in ctrl.data | orderBy:ctrl.colSort:ctrl.reverse\" ng-click=\"ctrl.select(row, $event)\" ng-class=\"ctrl.rowCssClass(row)\">\n" +
         "\r                <td ng-if=\"ctrl.checkbox\" class=\"col-lg-5 vertical-align-top  grid-control-column-check-box\">\n" +
         "\r						<div class=\"checkbox grid-control-no-margin\">\n" +
         "\r						    <label>\n" +
@@ -92,7 +97,7 @@ angular.module('template/grid', []).run(["$templateCache", function ($templateCa
 
     $templateCache.put("template/grid/scroll-grid.html", "<div class=\"table-scrollable\" ng-style=\"{ height: ctrl.height ? ctrl.height : 'auto' }\">\n" +
         "\r <div>\n" +
-        "\r   <table ng-class=\"ctrl.tableClass\"  class=\"table\">\n" +
+        "\r   <table ng-class=\"ctrl.tableClass\" class=\"table\">\n" +
         "\r       <thead>\n" +
         "\r           <tr>\n" +
         "\r                <th ng-if=\"ctrl.checkbox\" class=\"col-lg-5 vertical-align-top grid-control-column-check-box \">\n" +
@@ -142,12 +147,17 @@ angular.module('template/grid', []).run(["$templateCache", function ($templateCa
         "\r						</div>\n" +
         "\r                </th>\n" +
         "\r                <th ng-style=\"{'width' : col.width ? col.width : 'auto'}\" class=\"col-lg-5 vertical-align-top\" ng-repeat=\"col in ctrl.columns\">\n" +
-        "\r                   <span><i ng-if=\"col.icon\" ng-class=\"col.icon\"></i> {{ col.displayName | translate }}</span>\n" +
+        "\r                   <span ng-if=\"!col.sort\"><i ng-if=\"col.icon\" ng-class=\"col.icon\"></i> {{ col.displayName | translate }}</span>\n" +
+        "\r                   <a ng-if=\"col.sort\" class=\"white\" href=\"javascript:void(0);\" ng-click=\"ctrl.orderByGrid(col.field)\">\n" +
+        "\r                       {{ col.displayName | translate }}\n" +
+        "\r                       <span ng-show=\"ctrl.colSort == col.field && !ctrl.reverse\" class=\"fa fa-caret-down\"></span>\n" +
+        "\r                       <span ng-show=\"ctrl.colSort == col.field && ctrl.reverse\" class=\"fa fa-caret-up\"></span>\n" +
+        "\r                    </a>\n" +
         "\r                </th>\n" +
         "\r           </tr>\n" +
         "\r       </thead>\n" +
         "\r       <tbody vs-repeat vs-scroll-parent=\".vs-table-scroll\">\n" +
-        "\r           <tr ng-repeat=\"row in ctrl.data\" ng-click=\"ctrl.select(row, $event)\" ng-class=\"ctrl.rowCssClass(row)\">\n" +
+        "\r           <tr ng-repeat=\"row in ctrl.data | orderBy:ctrl.colSort:ctrl.reverse\" ng-click=\"ctrl.select(row, $event)\" ng-class=\"ctrl.rowCssClass(row)\">\n" +
         "\r                <td ng-if=\"ctrl.checkbox\" class=\"col-lg-5 vertical-align-top grid-control-column-check-box\">\n" +
         "\r						<div class=\"checkbox grid-control-no-margin\">\n" +
         "\r						    <label>\n" +
@@ -269,7 +279,7 @@ angular.module('angular-grid-control', ['template/grid']).directive('gcCompile',
             });
         }
     };
-}]).controller('gridControlController', ["$scope", "$q", "$element", '$timeout', function ($scope, $q, $element, $timeout) {
+}]).controller('gridControlController', ["$scope", "$q", "$element", '$timeout', 'orderByFilter', function ($scope, $q, $element, $timeout, orderByFilter) {
 
     var ctrl = this;
 
@@ -290,14 +300,13 @@ angular.module('angular-grid-control', ['template/grid']).directive('gcCompile',
     ctrl.selectedRows = [];
     $scope.multipleSelected = false;
 
-
     ctrl.selectAll = function () {
         ctrl.selectRows(undefined);
-    }
+    };
 
     ctrl.deselectAll = function () {
         ctrl.deselectRows(undefined);
-    }
+    };
 
     if ($scope.params.data) {
         ctrl.data = $scope.params.data;
@@ -313,8 +322,27 @@ angular.module('angular-grid-control', ['template/grid']).directive('gcCompile',
 
     ctrl.columns = $scope.params.columns;
 
+    ctrl.colSort = null;
+    
+    ctrl.columns.forEach(function (col){
+        if (col.sort && angular.isString(col.sort)) {
+            ctrl.reverse = col.sort == "DESC" ? true : false;
+            ctrl.colSort = col.field;
+        } 
+    });
+
+    if (ctrl.colSort) {
+        ctrl.data = orderByFilter(ctrl.data, ctrl.colSort, ctrl.reverse);
+    }
+    
     var isSearching = false;
     var isPageIndexReseted = false;
+
+    ctrl.orderByGrid = function (colSort) {
+        ctrl.reverse = (colSort !== null && ctrl.colSort === colSort) ? !ctrl.reverse : false;
+        ctrl.colSort = colSort;
+        ctrl.data = orderByFilter(ctrl.data, ctrl.colSort, ctrl.reverse);
+    };
 
     ctrl.select = function (row, $event) {
         if ($scope.params.selection && !$event.ctrlKey) {
@@ -425,7 +453,7 @@ angular.module('angular-grid-control', ['template/grid']).directive('gcCompile',
 
     ctrl.IsMultipleSelected = function (row) {
         return $scope.multipleSelected && ctrl.selectedRows.indexOf(row) >= 0;
-    }
+    };
 
     ctrl.buildData = function () {
         var defer = $q.defer();
@@ -446,7 +474,7 @@ angular.module('angular-grid-control', ['template/grid']).directive('gcCompile',
             defer.resolve(ctrl.data);
         }
         return defer.promise;
-    }
+    };
 
     if ($scope.params.options && $scope.params.options.type == "pagination") {
 

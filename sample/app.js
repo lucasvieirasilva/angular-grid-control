@@ -25,18 +25,18 @@ app.controller('sampleSimpleGridCtrl', ["$scope", function ($scope) {
 
     main.onSelectItem = function (row) {
         alert("the selected item is " + row.name);
-    }
+    };
 
     var data = [{
         "name": "Joe",
-        "updateDate": new Date()
+        "updateDate": new Date(2017, 08, 22, 10, 0, 5)
     }, {
         "name": "Marry",
         "Associated": true,
-        "updateDate": new Date()
+        "updateDate": new Date(2017, 08, 22, 10, 0, 10)
     }, {
         "name": "Doe",
-        "updateDate": new Date()
+        "updateDate": new Date(2017, 08, 22, 10, 0, 15)
     }];
 
     main.gridParams = {
@@ -51,11 +51,13 @@ app.controller('sampleSimpleGridCtrl', ["$scope", function ($scope) {
         },
         columns: [{
             field: "name",
-            displayName: "NameLabel"
+            displayName: "NameLabel",
+            sort: "ASC" // (true | false | 'ASC' | 'DESC')
         }, {
             field: "updateDate",
             displayName: "DateTimeLabel",
-            cellTemplate: "<span>{{ row[col.field] | date: 'dd/MM/yyyy HH:mm:ss' }}</span>"
+            cellTemplate: "<span>{{ row[col.field] | date: 'dd/MM/yyyy HH:mm:ss' }}</span>",
+            sort: false
         }],
     };
 }]);
@@ -186,7 +188,7 @@ app.controller('sampleVsSimpleGridCtrl', ["$scope", function ($scope) {
 
     var data = [];
 
-    for(var i = 0; i < 1000; i++) {
+    for (var i = 0; i < 1000; i++) {
         data.push({
             name: "Test " + i,
             "updateDate": new Date()
@@ -201,15 +203,17 @@ app.controller('sampleVsSimpleGridCtrl', ["$scope", function ($scope) {
             type: "simple",
             checkbox: true,
             checkboxField: 'Associated',
-            async: false
+            async: false,
         },
         columns: [{
             field: "name",
-            displayName: "NameLabel"
+            displayName: "NameLabel",
+            sort: "ASC" // (true | false | 'ASC' | 'DESC')
         }, {
             field: "updateDate",
             displayName: "DateTimeLabel",
-            cellTemplate: "<span>{{ row[col.field] | date: 'dd/MM/yyyy HH:mm:ss' }}</span>"
+            cellTemplate: "<span>{{ row[col.field] | date: 'dd/MM/yyyy HH:mm:ss' }}</span>",
+            sort: false
         }],
     };
 }]);

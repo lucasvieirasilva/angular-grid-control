@@ -9,15 +9,14 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <link href="lib/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
     <link href="lib/angular-bootstrap/css/ui-bootstrap-csp.css" rel="stylesheet" />
+    <link href="lib/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
     <link href="../src/css/angular-grid-control.css" rel="stylesheet" />
 </head>
 
 <body>
     <div ng-controller="sampleSimpleGridCtrl as main">
-        <div class="row">
-            <div class="col-lg-8" style="margin: 30px">
-                <gc-simple on-select="main.onSelectItem" params="main.gridParams"></gc-simple>
-            </div>
+        <div class="col-xs-12 col-lg-8" style="margin: 30px">
+            <gc-simple on-select="main.onSelectItem" params="main.gridParams"></gc-simple>
         </div>
     </div>
     <!-- Scripts -->

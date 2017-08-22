@@ -14,11 +14,9 @@
 
 <body>
     <div ng-controller="samplePaginationGridCtrl as main">
-        <div class="row">
-            <input type="button" ng-click="main.doUpdate()" value="Atualizar"/> 
-            <div class="col-lg-10" style="margin: 30px">
-                <gc-pagination params="main.gridParams"></gc-pagination>
-            </div>
+        <input type="button" ng-click="main.doUpdate()" value="Atualizar"/> 
+        <div class="col-xs-12 col-lg-8" style="margin: 30px">
+            <gc-pagination params="main.gridParams"></gc-pagination>
         </div>
     </div>
     <!-- Scripts -->
