@@ -621,6 +621,10 @@ angular.module('angular-grid-control', ['template/grid']).directive('gcCompile',
 
                     defer.resolve(response);
                 }).catch(function (error) {
+                    
+                    ctrl.data = [];
+                    ctrl.showPagination = false;
+
                     defer.reject(error);
                 });
             } else {
