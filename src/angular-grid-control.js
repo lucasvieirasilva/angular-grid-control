@@ -15,14 +15,24 @@ angular.module('template/grid', []).run(["$templateCache", function ($templateCa
         "\r						</div>\n" +
         "\r                </th>\n" +
         "\r                <th ng-style=\"{'width' : col.width ? col.width : 'auto'}\" class=\"col-lg-5 vertical-align-top\" ng-repeat=\"col in ctrl.columns\">\n" +
-        "\r                   <span class=\"col-xs-12 no-padding \"><i ng-if=\"col.icon\" ng-class=\"col.icon\"></i> {{ col.displayName | translate }}</span> \n" +
+        "\r                   <span ng-if=\"!col.sort\" class=\"col-xs-12 no-padding \"><i ng-if=\"col.icon\" ng-class=\"col.icon\"></i> {{ col.displayName | translate }}</span> \n" +
+        "\r                   <a ng-if=\"col.sort\" class=\"white\" href=\"javascript:void(0);\" ng-click=\"ctrl.searchDataSort(col.field)\">\n" +
+        "\r                       {{ col.displayName | translate }}\n" +
+        "\r                       <span ng-show=\"ctrl.colSort == col.field && !ctrl.reverse\" class=\"fa fa-caret-down\"></span>\n" +
+        "\r                       <span ng-show=\"ctrl.colSort == col.field && ctrl.reverse\" class=\"fa fa-caret-up\"></span>\n" +
+        "\r                   </a>\n" +
         "\r                   <div class=\"margin-top-10 input-group\" ng-if=\"col.filter && (col.filterType && col.filterType != 'date')\">\n" +
         "\r                         <span class=\"input-group-addon\"><i class=\"glyphicon glyphicon-search\"></i></span>\n" +
-        "\r                         <input class=\"form-control input-sm\" type=\"search\" ng-change=\"ctrl.searchData(col.filterValue)\"  ng-model=\"col.filterValue\" />\n" +
+        "\r                         <input class=\"form-control input-sm\" type=\"search\" ng-change=\"ctrl.searchData(col.filterValue)\" ng-model=\"col.filterValue\" />\n" +
         "\r                   </div>\n" +
-        "\r                   <div ng-if=\"col.filter && (col.filterType && col.filterType == 'date')\" class=\"input-group\" ng-controller=\"gridControlDatePickerCtrl\"><input type=\"text\" class=\"form-control\" show-button-bar=\"false\" ng-change=\"ctrl.searchData(col.filterValue)\" uib-datepicker-popup=\"{{format}}\" ng-model=\"$parent.col.filterValue\" is-open=\"opened\" datepicker-options=\"Options\" close-text=\"Close\" />\n" +
-        "\r                      <span class=\"input-group-btn\"><button type=\"button\" class=\"btn btn-default\" ng-click=\"open($event)\">\n" +
-        "\r                          <i class=\"glyphicon glyphicon-calendar\"></i></button></span></div>\n" +
+        "\r                   <div ng-if=\"col.filter && (col.filterType && col.filterType == 'date')\" class=\"input-group\" ng-controller=\"gridControlDatePickerCtrl\">\n" +
+        "\r                      <input type=\"text\" class=\"form-control\" show-button-bar=\"false\" ng-change=\"ctrl.searchData(col.filterValue)\" uib-datepicker-popup=\"{{format}}\" ng-model=\"$parent.col.filterValue\" is-open=\"opened\" datepicker-options=\"Options\" close-text=\"Close\" />\n" +
+        "\r                      <span class=\"input-group-btn\">\n" +
+        "\r                          <button type=\"button\" class=\"btn btn-default\" ng-click=\"open($event)\">\n" +
+        "\r                              <i class=\"glyphicon glyphicon-calendar\"></i>\n" +
+        "\r                          </button>\n" +
+        "\r                      </span>\n" +
+        "\r                   </div>\n" +
         "\r                </th>\n" +
         "\r           </tr>\n" +
         "\r       </thead>\n" +
@@ -49,7 +59,16 @@ angular.module('template/grid', []).run(["$templateCache", function ($templateCa
         "\r             <span>{{ ctrl.itemsPerPageText }}: </span>\n" +
         "\r             <select name=\"pageSize\" id=\"pageSize\" ng-options=\"option as option for option in ctrl.pageSizes\" ng-model=\"ctrl[ctrl.pagingInfoProperty][ctrl.pageSizeProperty]\"></select>\n" +
         "\r         </div>\n" +
-        "\r         <ul uib-pagination ng-model=\"ctrl[ctrl.pagingInfoProperty][ctrl.pageIndexProperty]\" total-items=\"ctrl[ctrl.pagingInfoProperty][ctrl.totalCountProperty]\" items-per-page=\"ctrl[ctrl.pagingInfoProperty][ctrl.pageSizeProperty]\" max-size=\"5\" boundary-links=\"true\" previous-text=\"{{ ctrl.previousText }}\" next-text=\"{{ ctrl.nextText }}\" first-text=\"{{ ctrl.firstText }}\" last-text=\"{{ ctrl.lastText }}\">\n" +
+        "\r         <ul uib-pagination \n" +
+        "\r             ng-model=\"ctrl[ctrl.pagingInfoProperty][ctrl.pageIndexProperty]\" \n" +
+        "\r             total-items=\"ctrl[ctrl.pagingInfoProperty][ctrl.totalCountProperty]\" \n" +
+        "\r             items-per-page=\"ctrl[ctrl.pagingInfoProperty][ctrl.pageSizeProperty]\"  \n" +
+        "\r             max-size=\"5\" \n" +
+        "\r             boundary-links=\"true\" \n" +
+        "\r             previous-text=\"{{ ctrl.previousText }}\" \n" +
+        "\r             next-text=\"{{ ctrl.nextText }}\" \n" +
+        "\r             first-text=\"{{ ctrl.firstText }}\" \n" +
+        "\r             last-text=\"{{ ctrl.lastText }}\">\n" +
         "\r         </ul>\n" +
         "\r   </div>\n" +
         "</div>");
@@ -323,18 +342,18 @@ angular.module('angular-grid-control', ['template/grid']).directive('gcCompile',
     ctrl.columns = $scope.params.columns;
 
     ctrl.colSort = null;
-    
-    ctrl.columns.forEach(function (col){
+
+    ctrl.columns.forEach(function (col) {
         if (col.sort && angular.isString(col.sort)) {
             ctrl.reverse = col.sort == "DESC" ? true : false;
             ctrl.colSort = col.field;
-        } 
+        }
     });
 
-    if (ctrl.colSort) {
+    if (ctrl.colSort && !($scope.params.options.pagination && $scope.params.options.pagination.useSort)) {
         ctrl.data = orderByFilter(ctrl.data, ctrl.colSort, ctrl.reverse);
     }
-    
+
     var isSearching = false;
     var isPageIndexReseted = false;
 
@@ -343,6 +362,19 @@ angular.module('angular-grid-control', ['template/grid']).directive('gcCompile',
         ctrl.colSort = colSort;
         ctrl.data = orderByFilter(ctrl.data, ctrl.colSort, ctrl.reverse);
     };
+
+    ctrl.searchDataSort = function (colSort) {
+        isSearching = true;
+
+        ctrl.reverse = (colSort !== null && ctrl.colSort === colSort) ? !ctrl.reverse : false;
+        ctrl.colSort = colSort;
+
+        ctrl.buildData(true, colSort).then(function (data) {
+            isSearching = false;
+        }).catch(function (error) {
+            isSearching = false;
+        });
+    }
 
     ctrl.select = function (row, $event) {
         if ($scope.params.selection && !$event.ctrlKey) {
@@ -491,6 +523,7 @@ angular.module('angular-grid-control', ['template/grid']).directive('gcCompile',
         ctrl.hasNextPageProperty = "hasNextPage";
         ctrl.hasPreviousPageProperty = "hasPreviousPage";
         ctrl.itemsProperty = "items";
+        ctrl.sortOrderProperty = "sortOrder";
 
         if ($scope.params.options && $scope.params.options.pagination) {
             if ($scope.params.options.pagination.itemsPerPageText) {
@@ -540,6 +573,10 @@ angular.module('angular-grid-control', ['template/grid']).directive('gcCompile',
             if ($scope.params.options.pagination.itemsProperty) {
                 ctrl.itemsProperty = $scope.params.options.pagination.itemsProperty;
             }
+
+            if ($scope.params.options.pagination.sortOrderProperty) {
+                ctrl.sortOrderProperty = $scope.params.options.pagination.sortOrderProperty;
+            }
         }
 
         ctrl.showPagination = true;
@@ -553,9 +590,7 @@ angular.module('angular-grid-control', ['template/grid']).directive('gcCompile',
 
         if ($scope.params.options && $scope.params.options.pagination && $scope.params.options.pagination.pageSize) {
             ctrl[ctrl.pagingInfoProperty][ctrl.pageSizeProperty] = $scope.params.options.pagination.pageSize;
-        } else if ($scope.params.options &&
-            (!$scope.params.options.pagination ||
-                ($scope.params.options.pagination && !$scope.params.options.pagination.useItemsPerPage))) {
+        } else if ($scope.params.options && (!$scope.params.options.pagination || ($scope.params.options.pagination && !$scope.params.options.pagination.useItemsPerPage))) {
             ctrl[ctrl.pagingInfoProperty][ctrl.pageSizeProperty] = ctrl.pageSizes[0];
         }
 
@@ -568,7 +603,7 @@ angular.module('angular-grid-control', ['template/grid']).directive('gcCompile',
             if (!isSearching) {
                 $scope.$emit('gridControl:beforePageChanged');
 
-                ctrl.buildData().then(function () {
+                ctrl.buildData(false, ctrl.colSort).then(function () {
                     $scope.$emit('gridControl:afterPageChanged');
                 });
             }
@@ -583,13 +618,18 @@ angular.module('angular-grid-control', ['template/grid']).directive('gcCompile',
             ctrl.showPagination = ctrl[ctrl.pagingInfoProperty][ctrl.hasNextPageProperty] || ctrl[ctrl.pagingInfoProperty][ctrl.hasPreviousPageProperty];
         };
 
-        ctrl.buildData = function (reset) {
+        ctrl.buildData = function (reset, colSort) {
             var defer = $q.defer();
 
             var request = {};
 
             request[ctrl.pagingInfoProperty] = angular.copy(ctrl[ctrl.pagingInfoProperty]);
             request[ctrl.pagingInfoProperty][ctrl.pageIndexProperty] -= 1;
+
+            if ($scope.params.options.pagination.useSort) {
+                var sort = ctrl.reverse == true ? "DESC" : "ASC";
+                request[ctrl.sortOrderProperty] = colSort ? colSort + ' ' + sort : null;
+            }
 
             var isFilteredSearch = false;
 
@@ -621,7 +661,7 @@ angular.module('angular-grid-control', ['template/grid']).directive('gcCompile',
 
                     defer.resolve(response);
                 }).catch(function (error) {
-                    
+
                     ctrl.data = [];
                     ctrl.showPagination = false;
 
