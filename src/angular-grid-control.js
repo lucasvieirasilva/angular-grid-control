@@ -203,12 +203,20 @@ var gcSimpleLink = function (scope, el, attr) {
             if (e.ctrlKey && e.keyCode == 65) {
                 scope.ctrl.selectAll();
             }
+
             e.preventDefault();
             return false;
         });
 
         el.bind('keydown', function (e) {
             if (e.ctrlKey) {
+                e.preventDefault();
+                return false;
+            }
+        });
+
+        el.bind('mousedown', function (e) {
+            if (e.shiftKey) {
                 e.preventDefault();
                 return false;
             }
@@ -406,6 +414,31 @@ angular.module('angular-grid-control', ['template/grid']).directive('gcCompile',
                 ctrl.selectRows(row);
             }
         }
+
+        if ($scope.params.multipleSelection && $event.shiftKey) {
+
+            var first;
+            var last;
+
+            if ($scope.params.selectedItem.Index > $scope.params.oldSelected.Index) {
+                first = $scope.params.oldSelected.Index;
+                last = $scope.params.selectedItem.Index
+            } else {
+                first = $scope.params.selectedItem.Index;
+                last = $scope.params.oldSelected.Index
+            }
+
+            for (first; first <= last; first++) {
+                if (ctrl.selectedRows.indexOf($scope.params.data[first]) == -1) {
+                    ctrl.selectedRows.push($scope.params.data[first]);
+                    ctrl.selectRows($scope.params.data[first]);
+                } else {
+                    ctrl.deselectRows($scope.params.data[first]);
+                }
+            }
+        }
+
+        $scope.params.oldSelected = $scope.params.selectedItem;
     };
 
     ctrl.selectRows = function (row) {
