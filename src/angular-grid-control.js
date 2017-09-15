@@ -358,7 +358,7 @@ angular.module('angular-grid-control', ['template/grid']).directive('gcCompile',
         }
     });
 
-    if (ctrl.colSort && !($scope.params.options.pagination && $scope.params.options.pagination.useSort)) {
+    if (ctrl.colSort && !($scope.params.options && $scope.params.options.pagination && $scope.params.options.pagination.useSort)) {
         ctrl.data = orderByFilter(ctrl.data, ctrl.colSort, ctrl.reverse);
     }
 
@@ -808,7 +808,6 @@ angular.module('angular-grid-control', ['template/grid']).directive('gcCompile',
         }
     }
 }]).controller('gridControlDatePickerCtrl', ["$scope", function ($scope) {
-
     $scope.formatDate = function (theDate) {
         var zeroPad = function (str) {
             return ('0' + str).slice(-2);
