@@ -3,7 +3,7 @@ angular.module('template/grid', []).run(["$templateCache", function ($templateCa
 
     $templateCache.put("template/grid/pagination-grid.html", "<div>\n" +
         "\r <div>\n" +
-        "\r   <table ng-class=\"ctrl.tableClass\" class=\"table\">\n" +
+        "\r   <table tabindex=\"0\" ng-class=\"ctrl.tableClass\" class=\"table\">\n" +
         "\r       <thead>\n" +
         "\r           <tr>\n" +
         "\r                <th ng-if=\"ctrl.checkbox\" class=\"col-lg-5 vertical-align-top grid-control-column-check-box \">\n" +
@@ -37,7 +37,7 @@ angular.module('template/grid', []).run(["$templateCache", function ($templateCa
         "\r           </tr>\n" +
         "\r       </thead>\n" +
         "\r       <tbody>\n" +
-        "\r           <tr ng-repeat=\"row in ctrl.data\" ng-click=\"ctrl.select(row, $event)\" ng-class=\"ctrl.rowCssClass(row)\">\n" +
+        "\r           <tr ng-repeat=\"row in ctrl.data\" ng-click=\"ctrl.select(row, $event)\" ng-focus=\"ctrl.select(row, $event)\" ng-class=\"ctrl.rowCssClass(row)\">\n" +
         "\r                <td ng-if=\"ctrl.checkbox\" class=\"col-lg-5 vertical-align-top  grid-control-column-check-box\">\n" +
         "\r						<div class=\"checkbox grid-control-no-margin\">\n" +
         "\r						    <label>\n" +
@@ -74,7 +74,7 @@ angular.module('template/grid', []).run(["$templateCache", function ($templateCa
         "</div>");
 
     $templateCache.put("template/grid/simple-grid.html", "<div>\n" +
-        "\r   <table ng-class=\"ctrl.tableClass\" class=\"table\">\n" +
+        "\r   <table tabindex=\"-1\" ng-class=\"ctrl.tableClass\" class=\"table\">\n" +
         "\r       <thead>\n" +
         "\r           <tr>\n" +
         "\r                <th ng-if=\"ctrl.checkbox\" class=\"col-lg-5 vertical-align-top grid-control-column-check-box \">\n" +
@@ -96,7 +96,7 @@ angular.module('template/grid', []).run(["$templateCache", function ($templateCa
         "\r           </tr>\n" +
         "\r       </thead>\n" +
         "\r       <tbody>\n" +
-        "\r           <tr ng-repeat=\"row in ctrl.data | orderBy:ctrl.colSort:ctrl.reverse\" ng-click=\"ctrl.select(row, $event)\" ng-class=\"ctrl.rowCssClass(row)\">\n" +
+        "\r           <tr tabindex={{$index}} ng-repeat=\"row in ctrl.data | orderBy:ctrl.colSort:ctrl.reverse track by $index\" ng-click=\"ctrl.select(row, $event)\" ng-focus=\"ctrl.select(row, $event)\" ng-class=\"ctrl.rowCssClass(row)\">\n" +
         "\r                <td ng-if=\"ctrl.checkbox\" class=\"col-lg-5 vertical-align-top  grid-control-column-check-box\">\n" +
         "\r						<div class=\"checkbox grid-control-no-margin\">\n" +
         "\r						    <label>\n" +
@@ -116,7 +116,7 @@ angular.module('template/grid', []).run(["$templateCache", function ($templateCa
 
     $templateCache.put("template/grid/scroll-grid.html", "<div class=\"table-scrollable\" ng-style=\"{ height: ctrl.height ? ctrl.height : 'auto' }\">\n" +
         "\r <div>\n" +
-        "\r   <table ng-class=\"ctrl.tableClass\" class=\"table\">\n" +
+        "\r   <table tabindex=\"-1\" ng-class=\"ctrl.tableClass\" class=\"table\">\n" +
         "\r       <thead>\n" +
         "\r           <tr>\n" +
         "\r                <th ng-if=\"ctrl.checkbox\" class=\"col-lg-5 vertical-align-top grid-control-column-check-box \">\n" +
@@ -154,7 +154,7 @@ angular.module('template/grid', []).run(["$templateCache", function ($templateCa
 
     $templateCache.put("template/grid/vs-simple-grid.html",
         "<div class=\"vs-table-scroll\">\n" +
-        "\r   <table ng-class=\"ctrl.tableClass\" class=\"table\">\n" +
+        "\r   <table tabindex=\"-1\" ng-class=\"ctrl.tableClass\" class=\"table\">\n" +
         "\r       <thead>\n" +
         "\r           <tr>\n" +
         "\r                <th ng-if=\"ctrl.checkbox\" class=\"col-lg-5 vertical-align-top grid-control-column-check-box\">\n" +
@@ -196,27 +196,75 @@ angular.module('template/grid', []).run(["$templateCache", function ($templateCa
 }]);
 
 var gcSimpleLink = function (scope, el, attr) {
-    if (scope.params.multipleSelection) {
-        el.attr('tabIndex', 0);
-
-        el.bind('keyup', function (e) {
-            if (e.ctrlKey && e.keyCode == 65) {
-                scope.ctrl.selectAll();
-            }
-
-            e.preventDefault();
-            return false;
-        });
-
-        el.bind('keydown', function (e) {
-            if (e.ctrlKey) {
+    if (scope.params.options) {
+        scope.params.selection = true;
+        if (scope.params.multipleSelection) {
+            el.bind('keyup', function (e) {
+                if (e.ctrlKey && e.keyCode == 65) {
+                    scope.ctrl.selectAll();
+                }
                 e.preventDefault();
                 return false;
-            }
-        });
+            });
 
-        el.bind('mousedown', function (e) {
-            if (e.shiftKey) {
+            el.bind('mousedown', function (e) {
+                if (e.shiftKey) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+        }
+        el.bind('keydown', function (e) {
+
+            if (e.ctrlKey && scope.params.multipleSelection) {
+                e.preventDefault();
+            }
+
+            var nextIndex;
+            if (e.keyCode == 40) {
+                nextIndex = scope.params.selectedItem.Index + 1;
+            } else if (e.keyCode == 38) {
+                nextIndex = scope.params.selectedItem.Index - 1;
+            }
+
+            if (nextIndex != null && nextIndex >= 0) {
+
+                scope.safeApply(function () {
+
+                    var nextItem = _.find(scope.ctrl.data, function (item) {
+                        return item.Index == nextIndex
+                    });
+
+                    if (nextItem) {
+                        scope.ctrl.select(nextItem, scope);
+
+                        if (scope.params.options.checkbox) {
+                            var selectedItem = el.find(".grid-control-item-selected");
+                            var chekboxSelected = selectedItem.find("input[type=checkbox]");
+                            var inputs = el.find("input[type=checkbox]");
+
+                            var indexNextCheckbox
+                            if (e.keyCode == 40) {
+                                indexNextCheckbox = _.indexOf(inputs, chekboxSelected[0]) + 1;
+                            } else if (e.keyCode == 38) {
+                                indexNextCheckbox = _.indexOf(inputs, chekboxSelected[0]) - 1;
+                            }
+
+                            inputs[indexNextCheckbox].parentElement.focus();
+                        } else {
+                            var tr = el.find(".grid-control-item-selected");
+                            var trs = el.find("tr");
+                            var indexNextTr
+                            if (e.keyCode == 40) {
+                                indexNextTr = _.indexOf(trs, tr[0]);
+                            } else if (e.keyCode == 38) {
+                                indexNextTr = _.indexOf(trs, tr[0]) - 2;
+                            }
+
+                            $('[tabindex=' + indexNextTr + ']').focus();
+                        }
+                    }
+                });
                 e.preventDefault();
                 return false;
             }
@@ -280,7 +328,7 @@ angular.module('angular-grid-control', ['template/grid']).directive('gcCompile',
         },
         controller: 'gridControlController',
         controllerAs: 'ctrl',
-        link: function (scope, el, attr) {}
+        link: gcSimpleLink
     };
 }]).directive('gcScroll', ["$q", function ($q) {
     return {
@@ -337,6 +385,9 @@ angular.module('angular-grid-control', ['template/grid']).directive('gcCompile',
 
     if ($scope.params.data) {
         ctrl.data = $scope.params.data;
+        if (ctrl.indexOrder) {
+            ctrl.indexOrder();
+        }
     }
 
     if ($scope.params.options && $scope.params.options.tableClass) {
@@ -360,6 +411,9 @@ angular.module('angular-grid-control', ['template/grid']).directive('gcCompile',
 
     if (ctrl.colSort && !($scope.params.options && $scope.params.options.pagination && $scope.params.options.pagination.useSort)) {
         ctrl.data = orderByFilter(ctrl.data, ctrl.colSort, ctrl.reverse);
+        for (var index = 0; index < ctrl.data.length; index++) {
+            ctrl.data[index].Index = index;
+        }
     }
 
     var isSearching = false;
@@ -369,6 +423,10 @@ angular.module('angular-grid-control', ['template/grid']).directive('gcCompile',
         ctrl.reverse = (colSort !== null && ctrl.colSort === colSort) ? !ctrl.reverse : false;
         ctrl.colSort = colSort;
         ctrl.data = orderByFilter(ctrl.data, ctrl.colSort, ctrl.reverse);
+
+        for (var index = 0; index < ctrl.data.length; index++) {
+            ctrl.data[index].Index = index;
+        }
     };
 
     ctrl.searchDataSort = function (colSort) {
@@ -382,9 +440,10 @@ angular.module('angular-grid-control', ['template/grid']).directive('gcCompile',
         }).catch(function (error) {
             isSearching = false;
         });
-    }
+    };
 
     ctrl.select = function (row, $event) {
+
         if ($scope.params.selection && !$event.ctrlKey) {
 
             $scope.params.selectedItem = row;
@@ -429,16 +488,22 @@ angular.module('angular-grid-control', ['template/grid']).directive('gcCompile',
             }
 
             for (first; first <= last; first++) {
-                if (ctrl.selectedRows.indexOf($scope.params.data[first]) == -1) {
-                    ctrl.selectedRows.push($scope.params.data[first]);
-                    ctrl.selectRows($scope.params.data[first]);
+                var item = _.find($scope.params.data, function (x) {
+                    return x.Index == first;
+                })
+
+                if (ctrl.selectedRows.indexOf(item) == -1) {
+                    ctrl.selectedRows.push(item);
+                    ctrl.selectRows(item);
                 } else {
-                    ctrl.deselectRows($scope.params.data[first]);
+                    ctrl.deselectRows(item);
                 }
             }
+
+            $scope.params.oldSelected = $scope.params.selectedItem;
         }
 
-        $scope.params.oldSelected = $scope.params.selectedItem;
+
     };
 
     ctrl.selectRows = function (row) {
@@ -541,6 +606,12 @@ angular.module('angular-grid-control', ['template/grid']).directive('gcCompile',
         return defer.promise;
     };
 
+    ctrl.indexOrder = function () {
+        ctrl.data = ctrl.reverse ? _.sortBy(ctrl.data, [ctrl.colSort], ['asc']) : _.sortBy(ctrl.data, [ctrl.colSort], ['desc']);
+        for (var index = 0; index < ctrl.data.length; index++) {
+            ctrl.data[index].Index = index;
+        }
+    };
     if ($scope.params.options && $scope.params.options.type == "pagination") {
 
         ctrl.itemsPerPageText = "Items per page";
@@ -691,11 +762,17 @@ angular.module('angular-grid-control', ['template/grid']).directive('gcCompile',
                     buildPaginationData(response);
 
                     $scope.params.currentData = ctrl.data;
+                    if (ctrl.indexOrder) {
+                        ctrl.indexOrder();
+                    }
 
                     defer.resolve(response);
                 }).catch(function (error) {
 
                     ctrl.data = [];
+                    if (ctrl.indexOrder) {
+                        ctrl.indexOrder();
+                    }
                     ctrl.showPagination = false;
 
                     defer.reject(error);
@@ -761,6 +838,9 @@ angular.module('angular-grid-control', ['template/grid']).directive('gcCompile',
         $scope.$watch('params.data', function (value) {
             if (value) {
                 ctrl.data = value;
+                if (ctrl.indexOrder) {
+                    ctrl.indexOrder();
+                }
             }
         });
     }
