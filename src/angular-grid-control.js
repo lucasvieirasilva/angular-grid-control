@@ -197,7 +197,12 @@ angular.module('template/grid', []).run(["$templateCache", function ($templateCa
 
 var gcSimpleLink = function (scope, el, attr) {
     if (scope.params.options) {
-        scope.params.selection = true;
+        if (scope.params.selection != null && scope.params.selection == false) {
+
+        } else {
+            scope.params.selection = true;
+        }
+
         if (scope.params.multipleSelection) {
             el.bind('keyup', function (e) {
                 if (e.ctrlKey && e.keyCode == 65) {
@@ -411,8 +416,8 @@ angular.module('angular-grid-control', ['template/grid']).directive('gcCompile',
 
     if (ctrl.colSort && !($scope.params.options && $scope.params.options.pagination && $scope.params.options.pagination.useSort)) {
         ctrl.data = orderByFilter(ctrl.data, ctrl.colSort, ctrl.reverse);
-        for (var index = 0; index < ctrl.data.length; index++) {
-            ctrl.data[index].Index = index;
+        if (ctrl.indexOrder) {
+            ctrl.indexOrder();
         }
     }
 
@@ -424,8 +429,8 @@ angular.module('angular-grid-control', ['template/grid']).directive('gcCompile',
         ctrl.colSort = colSort;
         ctrl.data = orderByFilter(ctrl.data, ctrl.colSort, ctrl.reverse);
 
-        for (var index = 0; index < ctrl.data.length; index++) {
-            ctrl.data[index].Index = index;
+        if (ctrl.indexOrder) {
+            ctrl.indexOrder();
         }
     };
 
@@ -445,9 +450,12 @@ angular.module('angular-grid-control', ['template/grid']).directive('gcCompile',
     ctrl.select = function (row, $event) {
 
         if ($scope.params.selection && !$event.ctrlKey) {
-
             $scope.params.selectedItem = row;
-            $scope.$emit('gridControl:selectItem', row);
+
+            if ($scope.params.selectionFalse != null && $scope.params.selectionFalse == true) {} else {
+                $scope.$emit('gridControl:selectItem', row);
+            }
+
             ctrl.deselectAll();
             if ($scope.onSelect instanceof Function) {
                 $scope.onSelect(row);
@@ -840,6 +848,10 @@ angular.module('angular-grid-control', ['template/grid']).directive('gcCompile',
                 ctrl.data = value;
                 if (ctrl.indexOrder) {
                     ctrl.indexOrder();
+                    if (($scope.params.selectionFalse == null || $scope.params.selectionFalse == undefined) || $scope.params.selectionFalse == false) {
+                        $scope.params.selectedItem = ctrl.data[0];
+                        $scope.$emit('gridControl:selectItem', ctrl.data[0]);
+                    }
                 }
             }
         });
