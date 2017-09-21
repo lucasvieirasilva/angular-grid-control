@@ -849,8 +849,10 @@ angular.module('angular-grid-control', ['template/grid']).directive('gcCompile',
                 if (ctrl.indexOrder) {
                     ctrl.indexOrder();
                     if (($scope.params.selectionFalse == null || $scope.params.selectionFalse == undefined) || $scope.params.selectionFalse == false) {
-                        $scope.params.selectedItem = ctrl.data[0];
-                        $scope.$emit('gridControl:selectItem', ctrl.data[0]);
+                        if (ctrl.data[0]) {
+                            $scope.params.selectedItem = ctrl.data[0];
+                            $scope.$emit('gridControl:selectItem', ctrl.data[0]);
+                        }
                     }
                 }
             }
