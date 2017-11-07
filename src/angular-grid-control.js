@@ -738,7 +738,7 @@ angular.module('angular-grid-control', ['template/grid']).directive('gcCompile',
             request[ctrl.pagingInfoProperty] = angular.copy(ctrl[ctrl.pagingInfoProperty]);
             request[ctrl.pagingInfoProperty][ctrl.pageIndexProperty] -= 1;
 
-            if ($scope.params.options.pagination.useSort) {
+            if ($scope.params.options.pagination && $scope.params.options.pagination.useSort) {
                 var sort = ctrl.reverse == true ? "DESC" : "ASC";
                 request[ctrl.sortOrderProperty] = colSort ? colSort + ' ' + sort : null;
             }
